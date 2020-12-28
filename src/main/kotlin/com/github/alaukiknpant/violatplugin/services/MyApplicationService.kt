@@ -1,6 +1,6 @@
-package org.jetbrains.plugins.template.services
+package com.github.alaukiknpant.violatplugin.services
 
-import org.jetbrains.plugins.template.MyBundle
+import com.github.alaukiknpant.violatplugin.MyBundle
 
 class MyApplicationService {
 
