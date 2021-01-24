@@ -29,13 +29,18 @@ public class GlobalSettings implements PersistentStateComponent<GlobalSettings> 
      */
     public boolean addInstallation(String path, boolean isDefault) {
         //check if a default installation already exists
+        System.out.println("here 1\n");
         if(isDefault && this.getInstallations().stream().anyMatch(ViolatInstallation::isDefaultInstall)) return false;
-
+        System.out.println("here 2\n");
         ViolatInstallation ii = ViolatInstallation.createViolatInstallation(path, isDefault);
+        System.out.println("here 3\n");
+        System.out.println("path:" + path);
         if(ii != null) {
+            System.out.println("here 4");
             installations.add(ii);
             return true;
         }
+        System.out.println("\nhere 5");
         return false;
     }
 

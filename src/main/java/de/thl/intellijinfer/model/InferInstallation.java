@@ -77,6 +77,8 @@ public class InferInstallation implements Serializable {
             reader.close();
             inferProcess.waitFor(PROCESS_TIMEOUT, TimeUnit.MILLISECONDS);
 
+            System.out.println("In CheckInfer - Infer version: " + output);
+
             if (inferProcess.exitValue() == 0) {
                 try {
                     return new Gson().fromJson(output.toString(), InferVersion.class);

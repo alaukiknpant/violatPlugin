@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public class ViolatInstallation implements Serializable {
@@ -53,7 +54,7 @@ public class ViolatInstallation implements Serializable {
         this.version = checkViolat(this.getPath());
         if(this.version != null) setConfirmedWorking(true);
 
-        log.info(String.format("Confirmed Infer Installation : %b Version: %s Path: %s Default: %b", confirmedWorking, (this.version == null ? "null" : this.version.toString()), path, defaultInstall));
+        log.info(String.format("Confirmed Violat Installation : %b Version: %s Path: %s Default: %b", confirmedWorking, (this.version == null ? "null" : this.version.toString()), path, defaultInstall));
 
         return confirmedWorking;
     }
@@ -66,7 +67,8 @@ public class ViolatInstallation implements Serializable {
     @Nullable
     public ViolatVersion checkViolat(@NotNull String path) {
         try {
-            Process inferProcess = new ProcessBuilder(path , "--version-json").start();
+            Process inferProcess = new ProcessBuilder(path , "--version").start();
+            System.out.println("In CheckViolat\n");
             StringBuilder output = new StringBuilder();
 
             BufferedReader reader = new BufferedReader(
@@ -78,11 +80,26 @@ public class ViolatInstallation implements Serializable {
             }
 
             reader.close();
+
             inferProcess.waitFor(PROCESS_TIMEOUT, TimeUnit.MILLISECONDS);
+
+            System.out.println("In CheckViolat - Violat version: " + output);
+            String strMain = output.toString();
+            String[] arrSplit = strMain.split("\\.");
+//            System.out.println(Integer.parseInt(arrSplit[0]));
+//            System.out.println(arrSplit[1]);
+//            System.out.println(arrSplit[2]);
+
 
             if (inferProcess.exitValue() == 0) {
                 try {
-                    return new Gson().fromJson(output.toString(), ViolatVersion.class);
+                    int major = Integer.parseInt(arrSplit[0].trim());
+                    int minor = Integer.parseInt(arrSplit[1].trim());
+                    int patch = Integer.parseInt(arrSplit[2].trim());
+                    return new ViolatVersion(major, minor, patch);
+
+
+//                    return new Gson().fromJson(output.toString(), ViolatVersion.class);
                 } catch(JsonSyntaxException ex) {
                     return null;
                 }
