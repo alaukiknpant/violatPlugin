@@ -38,7 +38,7 @@ public class MainToolWindow {
     private JPanel MainToolWindowContent;
     private Tree issueList;
 
-    MainToolWindow(ToolWindow toolWindow, Project project) {
+    public MainToolWindow(ToolWindow toolWindow, Project project) {
         issueList.getEmptyText().setText(ResourceBundle.getBundle("strings").getString("no.bug.list.to.show"));
         issueList.setModel(new DefaultTreeModel(null));
 
@@ -106,7 +106,7 @@ public class MainToolWindow {
         drawBugTree(ResultParser.getInstance(project).getBugsPerFile());
     }
 
-    JPanel getContent() {
+    public JPanel getContent() {
         return MainToolWindowContent;
     }
 

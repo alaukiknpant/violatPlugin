@@ -1,7 +1,7 @@
 <idea-plugin>
-    <id>de.thl.intellijinfer</id>
-    <name>Infer Integration</name>
-    <vendor email="friedrich.hudinjan@stud.th-luebeck.de">Friedrich Hudinjan</vendor>
+    <id>de.thl.violat</id>
+    <name>Violar Integration</name>
+    <vendor email="alaukik.pant@outlook.com">Alaukik Pant</vendor>
 
     <description><![CDATA[
     An Integration of the <a href="https://fbinfer.com/">Infer static analyzer</a> for the IntelliJ Platform.
@@ -19,7 +19,7 @@
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
     <depends>com.intellij.modules.lang</depends>
-    <depends optional="true" config-file="withCLion.xml">com.intellij.modules.clion</depends>
+
 
     <idea-version since-build="191"/>
 
@@ -33,6 +33,7 @@
 
     <version>1.1.0</version>
 
+<!--    Application Components for Infer-->
     <application-components>
         <component>
             <implementation-class>de.thl.intellijinfer.config.GlobalSettings</implementation-class>
@@ -41,6 +42,19 @@
             <implementation-class>de.thl.intellijinfer.config.DefaultConfigComponent</implementation-class>
         </component>
     </application-components>
+
+
+    <!--    Application Components for Violat-->
+    <application-components>
+        <component>
+            <implementation-class>de.thl.violat.config.GlobalSettings</implementation-class>
+        </component>
+        <component>
+            <implementation-class>de.thl.violat.config.DefaultConfigComponent</implementation-class>
+        </component>
+    </application-components>
+
+<!--    Extensions for Infer-->
     <extensions defaultExtensionNs="com.intellij">
         <!--suppress PluginXmlValidity -->
         <toolWindow id="Infer" icon="toolWindowIcon.png" secondary="false" anchor="bottom" factoryClass="de.thl.intellijinfer.ui.MainToolWindowFactory"/>
@@ -49,13 +63,49 @@
         <applicationConfigurable provider="de.thl.intellijinfer.config.PluginConfigurableProvider" id="Infer" displayName="Infer"/>
     </extensions>
 
+
+
+<!--    Extensions for Violat-->
+    <extensions defaultExtensionNs="com.intellij">
+        <!--suppress PluginXmlValidity -->
+        <toolWindow id="Violat" icon="toolWindowIcon.png" secondary="false" anchor="bottom" factoryClass="de.thl.intellijinfer.ui.MainToolWindowFactory"/>
+<!--        <projectService serviceImplementation="de.thl.intellijinfer.service.ResultParser"/>-->
+<!--        <configurationType implementation="de.thl.intellijinfer.run.InferConfigurationType"/>-->
+        <applicationConfigurable provider="de.thl.violat.config.PluginConfigurableProvider" id="Violat" displayName="Violat"/>
+    </extensions>
+
     <actions>
+
+<!--        For Infer-->
         <group id="infer.menu" text="Infer" description="Infer Integration menu">
             <add-to-group group-id="MainMenu" anchor="last"/>
-            <action id="infer.runaction" class="de.thl.intellijinfer.actions.RunAction" text="Run" description="Runs Infer">
-                <keyboard-shortcut keymap="$default" first-keystroke="control alt G" second-keystroke="R"/>
-            </action>
+
+<!--            <action id="infer.runaction" class="de.thl.intellijinfer.actions.RunAction" text="Run" description="Runs Infer">-->
+<!--                <keyboard-shortcut keymap="$default" first-keystroke="control alt G" second-keystroke="R"/>-->
+<!--            </action>-->
+
             <action id="infer.settingsaction" class="de.thl.intellijinfer.actions.SettingsAction" text="Settings" description="Opens Infer settings"/>
         </group>
+
+
+<!--       For Violat-->
+        <group id="violat.menu" text="Violat" description="Violat Integration menu">
+            <add-to-group group-id="MainMenu" anchor="last"/>
+<!--            <action id="infer.runaction" class="de.thl.intellijinfer.actions.RunAction" text="Run" description="Runs Infer">-->
+<!--                <keyboard-shortcut keymap="$default" first-keystroke="control alt G" second-keystroke="R"/>-->
+<!--            </action>-->
+            <action id="violat.settingsaction" class="de.thl.violat.actions.SettingsAction" text="Settings" description="Opens Violat settings"/>
+        </group>
+
+
+
+        <!--        For PopUp Violat-->
+        <!--        <action id="de.thl.commandLine.PopUpDialogAction" class="de.thl.commandLine.PopUpDialogAction" text="Violat"-->
+        <!--                description="Violat">-->
+        <!--            <add-to-group group-id="ToolsMenu" anchor="first"/>-->
+        <!--        </action>-->
+
+
+
     </actions>
 </idea-plugin>
