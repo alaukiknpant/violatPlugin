@@ -68,7 +68,7 @@
 <!--    Extensions for Violat-->
     <extensions defaultExtensionNs="com.intellij">
         <!--suppress PluginXmlValidity -->
-        <toolWindow id="Violat" icon="toolWindowIcon.png" secondary="false" anchor="bottom" factoryClass="de.thl.intellijinfer.ui.MainToolWindowFactory"/>
+        <toolWindow id="Violat" icon="toolWindowIcon.png" secondary="false" anchor="bottom" factoryClass="de.thl.violat.ui.MainToolWindowFactory"/>
 <!--        <projectService serviceImplementation="de.thl.intellijinfer.service.ResultParser"/>-->
 <!--        <configurationType implementation="de.thl.intellijinfer.run.InferConfigurationType"/>-->
         <applicationConfigurable provider="de.thl.violat.config.PluginConfigurableProvider" id="Violat" displayName="Violat"/>
