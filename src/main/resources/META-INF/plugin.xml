@@ -70,7 +70,7 @@
         <!--suppress PluginXmlValidity -->
         <toolWindow id="Violat" icon="toolWindowIcon.png" secondary="false" anchor="bottom" factoryClass="de.thl.violat.ui.MainToolWindowFactory"/>
 <!--        <projectService serviceImplementation="de.thl.intellijinfer.service.ResultParser"/>-->
-<!--        <configurationType implementation="de.thl.intellijinfer.run.InferConfigurationType"/>-->
+        <configurationType implementation="de.thl.violat.run.ViolatConfigurationType"/>
         <applicationConfigurable provider="de.thl.violat.config.PluginConfigurableProvider" id="Violat" displayName="Violat"/>
     </extensions>
 
@@ -80,9 +80,9 @@
         <group id="infer.menu" text="Infer" description="Infer Integration menu">
             <add-to-group group-id="MainMenu" anchor="last"/>
 
-<!--            <action id="infer.runaction" class="de.thl.intellijinfer.actions.RunAction" text="Run" description="Runs Infer">-->
-<!--                <keyboard-shortcut keymap="$default" first-keystroke="control alt G" second-keystroke="R"/>-->
-<!--            </action>-->
+            <action id="infer.runaction" class="de.thl.intellijinfer.actions.RunAction" text="Run" description="Runs Infer">
+                <keyboard-shortcut keymap="$default" first-keystroke="control alt G" second-keystroke="R"/>
+            </action>
 
             <action id="infer.settingsaction" class="de.thl.intellijinfer.actions.SettingsAction" text="Settings" description="Opens Infer settings"/>
         </group>
@@ -91,9 +91,9 @@
 <!--       For Violat-->
         <group id="violat.menu" text="Violat" description="Violat Integration menu">
             <add-to-group group-id="MainMenu" anchor="last"/>
-<!--            <action id="infer.runaction" class="de.thl.intellijinfer.actions.RunAction" text="Run" description="Runs Infer">-->
-<!--                <keyboard-shortcut keymap="$default" first-keystroke="control alt G" second-keystroke="R"/>-->
-<!--            </action>-->
+            <action id="violat.runaction" class="de.thl.violat.actions.RunAction" text="Run" description="Runs Violat">
+                <keyboard-shortcut keymap="$default" first-keystroke="control alt G" second-keystroke="R"/>
+            </action>
             <action id="violat.settingsaction" class="de.thl.violat.actions.SettingsAction" text="Settings" description="Opens Violat settings"/>
         </group>
 

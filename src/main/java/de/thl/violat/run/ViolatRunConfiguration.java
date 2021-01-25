@@ -1,4 +1,5 @@
-package de.thl.intellijinfer.run;
+package de.thl.violat.run;
+
 
 import com.intellij.execution.*;
 import com.intellij.execution.configurations.*;
@@ -8,13 +9,15 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizerUtil;
 import com.intellij.openapi.util.WriteExternalException;
-import com.intellij.util.PlatformUtils;
-import de.thl.intellijinfer.config.GlobalSettings;
-import de.thl.intellijinfer.model.Checker;
-import de.thl.intellijinfer.model.InferInstallation;
-import de.thl.intellijinfer.model.InferLaunchOptions;
-import de.thl.intellijinfer.model.buildtool.BuildToolFactory;
-import de.thl.intellijinfer.ui.RunConfigurationEditor;
+
+
+import de.thl.violat.config.GlobalSettings;
+import de.thl.violat.model.Checker;
+import de.thl.violat.model.ViolatInstallation;
+import de.thl.violat.model.ViolatLaunchOptions;
+import de.thl.violat.model.buildtool.BuildToolFactory;
+import de.thl.violat.run.ViolatRunState;
+import de.thl.violat.ui.RunConfigurationEditor;
 
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -25,22 +28,22 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class InferRunConfiguration extends RunConfigurationBase {
-    private static final String PREFIX = "INTELLIJ_INFER-";
+public class ViolatRunConfiguration extends RunConfigurationBase {
+    private static final String PREFIX = "INTELLIJ_VIOLAT-";
     private static final String INSTALLATION = PREFIX + "INSTALLATION";
     private static final String BUILD_TOOL = PREFIX + "BUILD_TOOL";
     private static final String ADDITIONAL_ARGUMENTS = PREFIX + "ADDITIONAL_ARGUMENTS";
     private static final String CHECKERS = PREFIX + "CHECKERS";
     private static final String REACTIVE_MODE = PREFIX + "REACTIVE_MODE";
 
-    private InferLaunchOptions launchOptions;
+    private ViolatLaunchOptions launchOptions;
     private Project project;
 
 
-    InferRunConfiguration(Project project, ConfigurationFactory factory, String name) {
+    ViolatRunConfiguration(Project project, ConfigurationFactory factory, String name) {
         super(project, factory, name);
         this.project = project;
-        this.launchOptions = new InferLaunchOptions(project);
+        this.launchOptions = new ViolatLaunchOptions(project);
 
 
     }
@@ -61,7 +64,7 @@ public class InferRunConfiguration extends RunConfigurationBase {
     @Nullable
     @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment executionEnvironment) {
-        return new InferRunState(this, executionEnvironment);
+        return new ViolatRunState(this, executionEnvironment);
     }
     @Override
     public void readExternal(@NotNull Element element) throws InvalidDataException {
@@ -72,9 +75,9 @@ public class InferRunConfiguration extends RunConfigurationBase {
             this.launchOptions.setUsingBuildTool(BuildToolFactory.getInstanceFromName(buildToolName));
         }
 
-        final InferInstallation installation = GlobalSettings.getInstance().getInstallationFromPath(JDOMExternalizerUtil.readField(element, INSTALLATION));
+        final ViolatInstallation installation = GlobalSettings.getInstance().getInstallationFromPath(JDOMExternalizerUtil.readField(element, INSTALLATION));
         if(installation != null) this.launchOptions.setSelectedInstallation(installation);
-        
+
         this.launchOptions.setAdditionalArgs(JDOMExternalizerUtil.readField(element, ADDITIONAL_ARGUMENTS));
         this.launchOptions.setReactiveMode(Boolean.valueOf(JDOMExternalizerUtil.readField(element, REACTIVE_MODE)));
 
@@ -106,11 +109,11 @@ public class InferRunConfiguration extends RunConfigurationBase {
     }
 
     @NotNull
-    String getInferLaunchCmd() throws ExecutionException {
-        return this.launchOptions.buildInferLaunchCmd(this.project);
+    String getViolatLaunchCmd() throws ExecutionException {
+        return this.launchOptions.buildViolatLaunchCmd(this.project);
     }
 
-    public InferLaunchOptions getLaunchOptions() {
+    public ViolatLaunchOptions getLaunchOptions() {
         return this.launchOptions;
     }
 
