@@ -8,8 +8,8 @@ import java.util.List;
 
 public enum Checker {
     //DEFAULT SINCE VERSION 0.15.0
-    VALIDATOR("validator", de.thl.violat.model.Checker.Category.DEFAULT, new ViolatVersion(0, 15, 0)),                               //validates if a given implementation is linearizable
-    HISTORIES("histories", de.thl.violat.model.Checker.Category.DEFAULT, new ViolatVersion(0, 15, 0));          //prints possible histories of a given implementation
+    VALIDATOR("validator", de.thl.violat.model.Checker.Category.OPTIONAL, new ViolatVersion(0, 16, 0)),                               //validates if a given implementation is linearizable
+    HISTORIES("histories", de.thl.violat.model.Checker.Category.OPTIONAL, new ViolatVersion(0, 16, 0));          //prints possible histories of a given implementation
 
     enum Category {DEFAULT, OPTIONAL, EXPERIMENTAL}
 
