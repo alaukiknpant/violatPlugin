@@ -4,7 +4,7 @@ package de.thl.violat.model;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.intellij.openapi.diagnostic.Logger;
-//import de.thl.intellijinfer.model.InferVersion;
+
 import de.thl.violat.model.ViolatVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,14 +13,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.util.Arrays;
+
 import java.util.concurrent.TimeUnit;
 
 public class ViolatInstallation implements Serializable {
-    private static final Logger log = Logger.getInstance(de.thl.intellijinfer.model.InferInstallation.class);
+    private static final Logger log = Logger.getInstance(de.thl.violat.model.ViolatInstallation.class);
     private static final long PROCESS_TIMEOUT = 500; //How long the check waits before it declares the binary the process started from as invalid (in ms)
 
-    private String path = "infer";
+    private String path = "violat";
     private ViolatVersion version;
     private boolean confirmedWorking;
     private boolean defaultInstall = false;

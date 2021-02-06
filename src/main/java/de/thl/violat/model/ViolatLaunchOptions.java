@@ -17,6 +17,7 @@ import de.thl.violat.config.GlobalSettings;
 import de.thl.violat.model.buildtool.BuildTool;
 import de.thl.violat.model.buildtool.BuildToolFactory;
 
+import de.thl.violat.model.buildtoolchecker.BuildToolChecker;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -41,7 +42,7 @@ public class ViolatLaunchOptions {
 
     //Saved Infer Configuration Options
     private ViolatInstallation selectedInstallation;
-    private BuildTool usingBuildTool;
+//    private BuildTool usingBuildTool;
     private String additionalArgs;
     private List<Checker> selectedCheckers;
     private Boolean reactiveMode;
@@ -53,7 +54,7 @@ public class ViolatLaunchOptions {
         this.selectedCheckers = Checker.getDefaultCheckers();
         this.reactiveMode = false;
         this.fullAnalysis = false;
-        createChangeFileListener();
+//        createChangeFileListener();
         this.availableBuildTools = BuildToolFactory.getApplicableBuildTools(project);
     }
 
@@ -63,19 +64,23 @@ public class ViolatLaunchOptions {
      */
     @NotNull
     public String buildViolatLaunchCmd(Project project) throws ExecutionException {
-        if(this.usingBuildTool == null) throw new ExecutionException("Violat Execution failed: No Build Tool selected");
+//        if(this.usingBuildTool == null) throw new ExecutionException("Violat Execution failed: No Build Tool selected");
         if(this.selectedInstallation == null) throw new ExecutionException("Violat Execution failed: No Installation selected");
+        if(!BuildToolChecker.returnInvalidInstallations()) throw new ExecutionException("Violat Execution failed: You do not have all the software pre-reqs(Java, Maven, Gradle)");
         if(this.selectedCheckers == null || this.selectedCheckers.isEmpty()) throw new ExecutionException("Violat Execution failed: No Checkers selected");
 
         StringBuilder sb = new StringBuilder(this.selectedInstallation.getPath());
 
-        //Additional Arguments - might not need this because -validaor and histories are plugged in as activation arguments below
-//        sb.append(" run ").append(additionalArgs).append(" ");
+
 
         //Checkers
         for(Checker checker : selectedCheckers) {
             sb.append(checker.getActivationArgument()).append(" ");
         }
+
+        //Additional Arguments - might not need this because -validaor and histories are plugged in as activation arguments below
+//        sb.append(" ").append(additionalArgs);
+        sb.append(additionalArgs);
 
         // There is no de-activation argument for Violat
 //        for(Checker checker : Checker.getMissingCheckers(selectedCheckers, this.selectedInstallation.getVersion())) {
@@ -83,26 +88,28 @@ public class ViolatLaunchOptions {
 //        }
 
         //Reactive Mode
-        if(this.reactiveMode && this.fullAnalysis) {
-            if(!changedFiles.isEmpty()) {
-                try {
-                    final Path file = Paths.get(project.getBasePath() + "/changedfiles.txt");
-                    Files.write(file, changedFiles, StandardCharsets.UTF_8);
-                    sb.append("--reactive --changed-files-index changedfiles.txt ");
-                } catch (IOException ioe) {
-                    log.error(ioe);
-                }
-            }
+//        if(this.reactiveMode && this.fullAnalysis) {
+//            if(!changedFiles.isEmpty()) {
+//                try {
+//                    final Path file = Paths.get(project.getBasePath() + "/changedfiles.txt");
+//                    Files.write(file, changedFiles, StandardCharsets.UTF_8);
+//                    sb.append("--reactive --changed-files-index changedfiles.txt ");
+//                } catch (IOException ioe) {
+//                    log.error(ioe);
+//                }
+//            }
+//
+//        }
 
-        }
         this.fullAnalysis = true;
         changedFiles.clear();
 
         //Build Tool
-        final String buildCmd = this.usingBuildTool.getBuildCmd(project);
-        if(buildCmd == null || buildCmd.isEmpty()) throw new ExecutionException("Infer Execution failed: Could not create a build tool command");
-        sb.append(buildCmd);
+//        final String buildCmd = this.usingBuildTool.getBuildCmd(project);
+//        if(buildCmd == null || buildCmd.isEmpty()) throw new ExecutionException("Violat Execution failed: Could not create a build tool command");
+//        sb.append(buildCmd);
 
+        System.out.println(sb);
         return sb.toString();
     }
 
@@ -110,31 +117,31 @@ public class ViolatLaunchOptions {
      * Creates a Listener (if one doesn't already exists), which collects all changed files, which are of a compilable type
      * @see BuildTool#FILE_EXTENSIONS
      */
-    private void createChangeFileListener() {
-        if(changeListener != null) return;
-        changeListener = new FileDocumentManagerListener() {
-            public void beforeDocumentSaving(@NotNull Document document) {
-                Pattern r = Pattern.compile("(?<=DocumentImpl\\[file://).*?(?=\\])"); //Matches everything between "DocumentImpl[file://" and "]"
-                Matcher m = r.matcher(document.toString());
+//    private void createChangeFileListener() {
+//        if(changeListener != null) return;
+//        changeListener = new FileDocumentManagerListener() {
+//            public void beforeDocumentSaving(@NotNull Document document) {
+//                Pattern r = Pattern.compile("(?<=DocumentImpl\\[file://).*?(?=\\])"); //Matches everything between "DocumentImpl[file://" and "]"
+//                Matcher m = r.matcher(document.toString());
+//
+//                if (m.find()) {
+//                    if(m.group(0) != null && BuildTool.FILE_EXTENSIONS.stream().anyMatch((ext) -> m.group(0).endsWith(ext))) {
+//                        changedFiles.add(m.group(0));
+//                    }
+//                }
+//            }
+//        };
+//        MessageBus bus = ApplicationManager.getApplication().getMessageBus();
+//        MessageBusConnection connection = bus.connect();
+//        connection.subscribe(AppTopics.FILE_DOCUMENT_SYNC, changeListener);
+//    }
 
-                if (m.find()) {
-                    if(m.group(0) != null && BuildTool.FILE_EXTENSIONS.stream().anyMatch((ext) -> m.group(0).endsWith(ext))) {
-                        changedFiles.add(m.group(0));
-                    }
-                }
-            }
-        };
-        MessageBus bus = ApplicationManager.getApplication().getMessageBus();
-        MessageBusConnection connection = bus.connect();
-        connection.subscribe(AppTopics.FILE_DOCUMENT_SYNC, changeListener);
-    }
-
-    public BuildTool getUsingBuildTool() {
-        return usingBuildTool;
-    }
-    public void setUsingBuildTool(BuildTool usingBuildTool) {
-        this.usingBuildTool = usingBuildTool;
-    }
+//    public BuildTool getUsingBuildTool() {
+//        return usingBuildTool;
+//    }
+//    public void setUsingBuildTool(BuildTool usingBuildTool) {
+//        this.usingBuildTool = usingBuildTool;
+//    }
     public String getAdditionalArgs() {
         return additionalArgs;
     }
@@ -150,9 +157,9 @@ public class ViolatLaunchOptions {
     public Boolean isReactiveMode() {
         return reactiveMode;
     }
-    public void setReactiveMode(Boolean reactiveMode) {
-        this.reactiveMode = reactiveMode;
-    }
+//    public void setReactiveMode(Boolean reactiveMode) {
+//        this.reactiveMode = reactiveMode;
+//    }
     public ViolatInstallation getSelectedInstallation() {
         return selectedInstallation;
     }

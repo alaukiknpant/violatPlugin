@@ -48,7 +48,7 @@ public class ViolatConfigurationFactory extends ConfigurationFactory {
             RunnerAndConfigurationSettings rcs = runManager.createConfiguration(name, inferFactory);
 
             ViolatRunConfiguration inferRC = (ViolatRunConfiguration) rcs.getConfiguration();
-            inferRC.getLaunchOptions().setUsingBuildTool(BuildToolFactory.getPreferredBuildTool(runManager.getProject()));
+//            inferRC.getLaunchOptions().setUsingBuildTool(BuildToolFactory.getPreferredBuildTool(runManager.getProject()));
             inferRC.getLaunchOptions().setSelectedInstallation(GlobalSettings.getInstance().getAnyValidInstallation());
 
             return rcs;

@@ -16,7 +16,7 @@ import de.thl.violat.model.Checker;
 import de.thl.violat.model.ViolatInstallation;
 import de.thl.violat.model.ViolatLaunchOptions;
 import de.thl.violat.model.buildtool.BuildToolFactory;
-import de.thl.violat.run.ViolatRunState;
+import de.thl.violat.model.buildtoolchecker.BuildToolChecker;
 import de.thl.violat.ui.RunConfigurationEditor;
 
 import org.jdom.Element;
@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,8 +34,9 @@ public class ViolatRunConfiguration extends RunConfigurationBase {
     private static final String INSTALLATION = PREFIX + "INSTALLATION";
     private static final String BUILD_TOOL = PREFIX + "BUILD_TOOL";
     private static final String ADDITIONAL_ARGUMENTS = PREFIX + "ADDITIONAL_ARGUMENTS";
+    private static final String ADDITIONAL_ARGUMENTS_PATH = PREFIX + "ADDITIONAL_ARGUMENTS_PATH";
     private static final String CHECKERS = PREFIX + "CHECKERS";
-    private static final String REACTIVE_MODE = PREFIX + "REACTIVE_MODE";
+//    private static final String REACTIVE_MODE = PREFIX + "REACTIVE_MODE";
 
     private ViolatLaunchOptions launchOptions;
     private Project project;
@@ -56,7 +58,9 @@ public class ViolatRunConfiguration extends RunConfigurationBase {
 
     @Override
     public void checkConfiguration() throws RuntimeConfigurationException {
-        if(launchOptions.getUsingBuildTool() == null) throw new RuntimeConfigurationException("No Build Tool Selected");
+
+//        if(launchOptions.getUsingBuildTool() == null) throw new RuntimeConfigurationException("No Build Tool Selected"); if(launchOptions.getUsingBuildTool() == null) throw new RuntimeConfigurationException("No Build Tool Selected");
+        if (!BuildToolChecker.returnInvalidInstallations()) throw new RuntimeConfigurationException("Java, maven or gradle might be missing");
         if(launchOptions.getSelectedCheckers() == null || launchOptions.getSelectedCheckers().isEmpty()) throw new RuntimeConfigurationException("No Checker selected");
         if(launchOptions.getSelectedInstallation() == null || !launchOptions.getSelectedInstallation().isConfirmedWorking()) throw new RuntimeConfigurationException("No selected Installation or the Installation is invalid");
     }
@@ -69,17 +73,17 @@ public class ViolatRunConfiguration extends RunConfigurationBase {
     @Override
     public void readExternal(@NotNull Element element) throws InvalidDataException {
         super.readExternal(element);
-        final String buildToolName = JDOMExternalizerUtil.readField(element, BUILD_TOOL);
-
-        if(buildToolName != null) {
-            this.launchOptions.setUsingBuildTool(BuildToolFactory.getInstanceFromName(buildToolName));
-        }
+//        final String buildToolName = JDOMExternalizerUtil.readField(element, BUILD_TOOL);
+//
+//        if(buildToolName != null) {
+//            this.launchOptions.setUsingBuildTool(BuildToolFactory.getInstanceFromName(buildToolName));
+//        }
 
         final ViolatInstallation installation = GlobalSettings.getInstance().getInstallationFromPath(JDOMExternalizerUtil.readField(element, INSTALLATION));
         if(installation != null) this.launchOptions.setSelectedInstallation(installation);
 
         this.launchOptions.setAdditionalArgs(JDOMExternalizerUtil.readField(element, ADDITIONAL_ARGUMENTS));
-        this.launchOptions.setReactiveMode(Boolean.valueOf(JDOMExternalizerUtil.readField(element, REACTIVE_MODE)));
+//        this.launchOptions.setReactiveMode(Boolean.valueOf(JDOMExternalizerUtil.readField(element, REACTIVE_MODE)));
 
         final String checkerString = JDOMExternalizerUtil.readField(element, CHECKERS);
         if(checkerString != null) {
@@ -96,10 +100,10 @@ public class ViolatRunConfiguration extends RunConfigurationBase {
     @Override
     public void writeExternal(@NotNull Element element) throws WriteExternalException {
         super.writeExternal(element);
-        if(this.launchOptions.getUsingBuildTool() != null) JDOMExternalizerUtil.writeField(element, BUILD_TOOL, this.launchOptions.getUsingBuildTool().getName());
+//        if(this.launchOptions.getUsingBuildTool() != null) JDOMExternalizerUtil.writeField(element, BUILD_TOOL, this.launchOptions.getUsingBuildTool().getName());
         if(this.launchOptions.getSelectedInstallation() != null) JDOMExternalizerUtil.writeField(element, INSTALLATION, this.launchOptions.getSelectedInstallation().getPath());
         JDOMExternalizerUtil.writeField(element, ADDITIONAL_ARGUMENTS, this.launchOptions.getAdditionalArgs());
-        JDOMExternalizerUtil.writeField(element, REACTIVE_MODE, this.launchOptions.isReactiveMode().toString());
+//        JDOMExternalizerUtil.writeField(element, REACTIVE_MODE, this.launchOptions.isReactiveMode().toString());
 
         StringBuilder sb = new StringBuilder();
         for(Checker checker : this.launchOptions.getSelectedCheckers()) {
