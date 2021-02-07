@@ -161,6 +161,7 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
                                 checkersListModel.add(selectedChecker);
                             } else {
                                 System.out.println("Checker can have 1 item max");
+                                checkersListModel.add(selectedChecker);
                                 // Option to create some sort of Pop Up
 //                                createCheckerFullPopup().show(button.getPreferredPopupPoint());
                             }

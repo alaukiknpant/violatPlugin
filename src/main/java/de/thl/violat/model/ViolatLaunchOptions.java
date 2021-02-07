@@ -68,6 +68,7 @@ public class ViolatLaunchOptions {
         if(this.selectedInstallation == null) throw new ExecutionException("Violat Execution failed: No Installation selected");
         if(!BuildToolChecker.returnInvalidInstallations()) throw new ExecutionException("Violat Execution failed: You do not have all the software pre-reqs(Java, Maven, Gradle)");
         if(this.selectedCheckers == null || this.selectedCheckers.isEmpty()) throw new ExecutionException("Violat Execution failed: No Checkers selected");
+        if(this.selectedCheckers.size() > 1) throw new ExecutionException("Violat Execution failed: More than 1 Checkers Selected");
 
         StringBuilder sb = new StringBuilder(this.selectedInstallation.getPath());
 

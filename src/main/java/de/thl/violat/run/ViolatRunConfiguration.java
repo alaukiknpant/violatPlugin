@@ -63,6 +63,7 @@ public class ViolatRunConfiguration extends RunConfigurationBase {
         if (!BuildToolChecker.returnInvalidInstallations()) throw new RuntimeConfigurationException("Java, maven or gradle might be missing");
         if(launchOptions.getSelectedCheckers() == null || launchOptions.getSelectedCheckers().isEmpty()) throw new RuntimeConfigurationException("No Checker selected");
         if(launchOptions.getSelectedInstallation() == null || !launchOptions.getSelectedInstallation().isConfirmedWorking()) throw new RuntimeConfigurationException("No selected Installation or the Installation is invalid");
+        if (launchOptions.getSelectedCheckers().size() > 1) throw new RuntimeConfigurationException("We can have a maximum of 1 Checker");
     }
 
     @Nullable
