@@ -21,6 +21,8 @@ public class GlobalSettings implements PersistentStateComponent<GlobalSettings> 
     private boolean showConsole = false;
 
 
+
+
     /**
      * Adds a ViolatInstallation to the global list, which is used by run configurations.
      * @param path The path of the installation

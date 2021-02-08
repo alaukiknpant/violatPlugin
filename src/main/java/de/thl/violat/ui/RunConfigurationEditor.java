@@ -5,12 +5,17 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.JBPopupListener;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.CollectionListModel;
 import com.intellij.ui.JBColor;
@@ -34,6 +39,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
@@ -49,8 +56,21 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
     private JPanel checkersJPanel;
     private JBList<Checker> checkersJBList;
     private CollectionListModel<Checker> checkersListModel;
-
     private ViolatVersion selectedVersion; //the current selected version of the infer installation
+
+   //paths
+    private TextFieldWithBrowseButton artifactPathChooser;
+    private TextFieldWithBrowseButton JSONpathChooser;
+
+    //path booleans
+    private boolean artifactModified = false;
+    private boolean JSONModified = false;
+
+    // buttons
+    private JButton addAndCheckSpecs;
+    private JButton checkAndAddArtifactsButton;
+
+
 
     public RunConfigurationEditor() {
         this.installPanel.setLayout(new OverlayLayout(this.installPanel));
@@ -65,12 +85,86 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
                 selectedVersion = ((ViolatInstallation)itemEvent.getItem()).getVersion();
             }
         });
+
+        // artifact path chooser
+
+        artifactPathChooser.addActionListener(e -> FileChooser.chooseFile(
+                FileChooserDescriptorFactory.createSingleFolderDescriptor(),
+                ProjectUtil.guessCurrentProject(mainPanel),
+                LocalFileSystem.getInstance().findFileByPath(artifactPathChooser.getText().isEmpty() ? "/" : artifactPathChooser.getText()), //where the file chooser starts
+                (dir) -> artifactPathChooser.setText(dir.getPath())));
+
+        artifactPathChooser.getTextField().getDocument().addDocumentListener(new DocumentListener() {
+            @Override public void insertUpdate(DocumentEvent e) {artifactModified = true;}
+            @Override public void removeUpdate(DocumentEvent e) {artifactModified = true;}
+            @Override public void changedUpdate(DocumentEvent e) {artifactModified = true;}
+        });
+
+        // Specs path chooser
+
+        JSONpathChooser.addActionListener(e -> FileChooser.chooseFile(
+                FileChooserDescriptorFactory.createSingleFolderDescriptor(),
+                ProjectUtil.guessCurrentProject(mainPanel),
+                LocalFileSystem.getInstance().findFileByPath(JSONpathChooser.getText().isEmpty() ? "/" : JSONpathChooser.getText()), //where the file chooser starts
+                (dir) -> JSONpathChooser.setText(dir.getPath())));
+
+        JSONpathChooser.getTextField().getDocument().addDocumentListener(new DocumentListener() {
+            @Override public void insertUpdate(DocumentEvent e) {JSONModified = true;}
+            @Override public void removeUpdate(DocumentEvent e) {JSONModified = true;}
+            @Override public void changedUpdate(DocumentEvent e) {JSONModified = true;}
+        });
+
+
+        //Clicked Add Installation Button
+        checkAndAddArtifactsButton.addActionListener(e -> {
+            final boolean success = GlobalSettings.getInstance().addInstallation(artifactPathChooser.getText(), false);
+            if(!success) showArtifactAddInstallationError();
+        });
+
+        // We do not have a JB box yet
+//        showInferConsoleJBCheckBox.addActionListener(e -> artifactModified = true);
+
+    }
+
+//    private void refreshInstallationList() {
+//        ((DefaultListModel<ViolatInstallation>) this.installationJBList.getModel()).clear();
+//        for(ViolatInstallation ii : GlobalSettings.getInstance().getInstallations()) {
+//            ((DefaultListModel<ViolatInstallation>) this.installationJBList.getModel()).addElement(ii);
+//        }
+//    }
+
+    private void showArtifactAddInstallationError() {
+        final Color oldBg = artifactPathChooser.getBackground();
+        artifactPathChooser.setBackground(JBColor.red);
+        checkAndAddArtifactsButton.setEnabled(false);
+        artifactPathChooser.setText(ResourceBundle.getBundle("strings").getString("invalid.artifact.selected"));
+        Timer timer = new Timer(3000, actionEvent -> {
+            artifactPathChooser.setBackground(oldBg);
+            checkAndAddArtifactsButton.setEnabled(true);
+            artifactPathChooser.setText("");
+        });
+        timer.setRepeats(false);
+        timer.start();
+    }
+
+    private void showSpecsAddInstallationError() {
+        final Color oldBg = JSONpathChooser.getBackground();
+        JSONpathChooser.setBackground(JBColor.red);
+        checkAndAddArtifactsButton.setEnabled(false);
+        JSONpathChooser.setText(ResourceBundle.getBundle("strings").getString("invalid.spec.selected"));
+        Timer timer = new Timer(3000, actionEvent -> {
+            JSONpathChooser.setBackground(oldBg);
+            checkAndAddArtifactsButton.setEnabled(true);
+            JSONpathChooser.setText("");
+        });
+        timer.setRepeats(false);
+        timer.start();
     }
 
     @Override
     protected void resetEditorFrom(@NotNull ViolatRunConfiguration inferRC) {
         reloadBuildToolComboBoxList(inferRC);
-        additionalArgsTextField.setText(inferRC.getLaunchOptions().getAdditionalArgs());
+//        additionalArgsTextField.setText(inferRC.getLaunchOptions().getAdditionalArgs());
         this.checkersListModel.replaceAll(inferRC.getLaunchOptions().getSelectedCheckers());
 //        this.reactiveModeJBCheckBox.setSelected(inferRC.getLaunchOptions().isReactiveMode());
         reloadInstallationComboBox(inferRC);
@@ -82,7 +176,7 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
     protected void applyEditorTo(@NotNull ViolatRunConfiguration violatRC) {
         if(this.violatInstallationComboBox.isEnabled()) violatRC.getLaunchOptions().setSelectedInstallation((ViolatInstallation) this.violatInstallationComboBox.getSelectedItem());
 //        violatRC.getLaunchOptions().setUsingBuildTool((BuildTool) usingBuildToolComboBox.getSelectedItem());
-        violatRC.getLaunchOptions().setAdditionalArgs(additionalArgsTextField.getText());
+//        violatRC.getLaunchOptions().setAdditionalArgs(additionalArgsTextField.getText());
         violatRC.getLaunchOptions().setSelectedCheckers(this.checkersListModel.toList());
 //        violatRC.getLaunchOptions().setReactiveMode(this.reactiveModeJBCheckBox.isSelected());
 
@@ -120,7 +214,7 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
             //create the warning label only if it doesnt exist (= only one other component in the installPanel)
             if(installPanel.getComponentCount() == 1) {
                 final JBLabel warningLabel = new JBLabel(ResourceBundle.getBundle("strings").getString("warning.no.valid.installation.found.click.here.to.add.one"));
-                warningLabel.setForeground(new JBColor(0x0764FF, 0x0652FF));
+                warningLabel.setForeground(new JBColor(0x5106FF, 0x0652FF));
                 warningLabel.setHorizontalAlignment(SwingConstants.CENTER);
                 warningLabel.addMouseListener(new MouseAdapter() {
                     @Override
