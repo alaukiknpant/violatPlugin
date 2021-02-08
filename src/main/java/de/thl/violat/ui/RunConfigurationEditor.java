@@ -2,25 +2,18 @@ package de.thl.violat.ui;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.ShowSettingsUtil;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.JBPopupListener;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.CollectionListModel;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.ToolbarDecorator;
-import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBPanel;
@@ -36,7 +29,6 @@ import de.thl.violat.model.buildtool.BuildTool;
 import de.thl.violat.run.ViolatRunConfiguration;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -67,7 +59,7 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
     private boolean JSONModified = false;
 
     // buttons
-    private JButton addAndCheckSpecs;
+    private JButton checkAndAddSpecsButton;
     private JButton checkAndAddArtifactsButton;
 
 
@@ -89,7 +81,7 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
         // artifact path chooser
 
         artifactPathChooser.addActionListener(e -> FileChooser.chooseFile(
-                FileChooserDescriptorFactory.createSingleFolderDescriptor(),
+                FileChooserDescriptorFactory.createAllButJarContentsDescriptor(),
                 ProjectUtil.guessCurrentProject(mainPanel),
                 LocalFileSystem.getInstance().findFileByPath(artifactPathChooser.getText().isEmpty() ? "/" : artifactPathChooser.getText()), //where the file chooser starts
                 (dir) -> artifactPathChooser.setText(dir.getPath())));
@@ -103,10 +95,10 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
         // Specs path chooser
 
         JSONpathChooser.addActionListener(e -> FileChooser.chooseFile(
-                FileChooserDescriptorFactory.createSingleFolderDescriptor(),
+                FileChooserDescriptorFactory.createSingleFileDescriptor(),
                 ProjectUtil.guessCurrentProject(mainPanel),
-                LocalFileSystem.getInstance().findFileByPath(JSONpathChooser.getText().isEmpty() ? "/" : JSONpathChooser.getText()), //where the file chooser starts
-                (dir) -> JSONpathChooser.setText(dir.getPath())));
+                    LocalFileSystem.getInstance().findFileByPath(JSONpathChooser.getText().isEmpty() ? "/" : JSONpathChooser.getText()), //where the file chooser starts
+                    (dir) -> JSONpathChooser.setText(dir.getPath())));
 
         JSONpathChooser.getTextField().getDocument().addDocumentListener(new DocumentListener() {
             @Override public void insertUpdate(DocumentEvent e) {JSONModified = true;}
@@ -116,9 +108,20 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
 
 
         //Clicked Add Installation Button
+        checkAndAddSpecsButton.addActionListener(e -> {
+            final boolean success = GlobalSettings.getInstance().addJsonSpecs(JSONpathChooser.getText());
+            if(!success) showSpecsAddInstallationError();
+            else showPathAddedSucessfully(JSONpathChooser, checkAndAddSpecsButton);
+//            System.out.println(JSONpathChooser.getText());
+//            System.out.println("\n\n\n");
+        });
+
         checkAndAddArtifactsButton.addActionListener(e -> {
-            final boolean success = GlobalSettings.getInstance().addInstallation(artifactPathChooser.getText(), false);
+            final boolean success = GlobalSettings.getInstance().addArtifact(artifactPathChooser.getText());
             if(!success) showArtifactAddInstallationError();
+            else showPathAddedSucessfully(artifactPathChooser, checkAndAddArtifactsButton);
+//            System.out.println(JSONpathChooser.getText());
+//            System.out.println("\n\n\n");
         });
 
         // We do not have a JB box yet
@@ -156,6 +159,19 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
             JSONpathChooser.setBackground(oldBg);
             checkAndAddArtifactsButton.setEnabled(true);
             JSONpathChooser.setText("");
+        });
+        timer.setRepeats(false);
+        timer.start();
+    }
+
+    private void showPathAddedSucessfully(TextFieldWithBrowseButton pathChooser, JButton button) {
+        final Color oldBg = pathChooser.getBackground();
+        pathChooser.setBackground(JBColor.green);
+        button.setEnabled(false);
+//        pathChooser.setText(ResourceBundle.getBundle("strings").getString("path.added.sucessfully"));
+        Timer timer = new Timer(3000, actionEvent -> {
+//            JSONpathChooser.setBackground(oldBg);
+            button.setEnabled(true);
         });
         timer.setRepeats(false);
         timer.start();

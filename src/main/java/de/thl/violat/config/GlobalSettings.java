@@ -4,6 +4,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Property;
+import de.thl.violat.model.ArtifactInitializer;
+import de.thl.violat.model.SpecificationInitializer;
 import de.thl.violat.model.ViolatInstallation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +23,44 @@ public class GlobalSettings implements PersistentStateComponent<GlobalSettings> 
     private boolean showConsole = false;
 
 
+    @Property
+    private String pathToSpecs;
+
+    @Property
+    private String pathToArtifact;
+
+    // Related to adding JSON Specs
+    public boolean addJsonSpecs(String path) {
+        //check if a JSON file exists in the given path and whether the JSON file is valid
+        SpecificationInitializer spec = SpecificationInitializer.createSpecificationInitializer(path);
+        System.out.println("path:" + path);
+
+        if(spec != null) {
+            pathToSpecs = path;
+            return true;
+        }
+        return false;
+    }
+
+    public String getJsonSpecs() {
+        //check if a JSON file exists in the given path and whether the JSON file is valid
+        if(this.pathToSpecs != null) {
+            return pathToSpecs;
+        }
+        return "";
+    }
+
+    public boolean addArtifact(String path) {
+        //check if a JSON file exists in the given path and whether the JSON file is valid
+        ArtifactInitializer artifact = ArtifactInitializer.createArtifactInitializer(path);
+        System.out.println("path:" + path);
+
+        if(artifact != null) {
+            pathToArtifact = path;
+            return true;
+        }
+        return false;
+    }
 
 
     /**
@@ -52,6 +92,14 @@ public class GlobalSettings implements PersistentStateComponent<GlobalSettings> 
     public void removeInstallation(ViolatInstallation ii) {
         installations.remove(ii);
     }
+
+
+
+
+
+
+
+
 
     /**
      * Gets the default Installation

@@ -47,7 +47,8 @@ public class SettingsForm {
         getInferHereJBLabel.setForeground(new JBColor(0x0645AD, 0x0652FF));
 
         //CLicked on the File Chooser Icon by the text box
-        pathChooser.addActionListener(e -> FileChooser.chooseFile(
+        pathChooser.addActionListener(e ->
+                FileChooser.chooseFile(
                 FileChooserDescriptorFactory.createSingleFolderDescriptor(),
                 ProjectUtil.guessCurrentProject(mainPanel),
                 LocalFileSystem.getInstance().findFileByPath(pathChooser.getText().isEmpty() ? "/" : pathChooser.getText()), //where the file chooser starts
@@ -75,6 +76,8 @@ public class SettingsForm {
         //Clicked Add Installation Button
         addAndCheckInstallationButton.addActionListener(e -> {
             final boolean success = GlobalSettings.getInstance().addInstallation(pathChooser.getText(), false);
+            System.out.println(pathChooser.getText());
+            System.out.println("\n\n\n");
             if(success) refreshInstallationList();
             else showAddInstallationError();
         });
