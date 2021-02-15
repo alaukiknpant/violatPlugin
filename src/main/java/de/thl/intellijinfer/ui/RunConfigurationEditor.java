@@ -32,7 +32,7 @@ public class RunConfigurationEditor extends SettingsEditor<InferRunConfiguration
     private JComboBox<InferInstallation> inferInstallationComboBox;
     private JComboBox<BuildTool> usingBuildToolComboBox;
     private ExpandableTextField additionalArgsTextField;
-    private JBCheckBox reactiveModeJBCheckBox;
+
     private JBPanel installPanel;
     private JPanel checkersJPanel;
     private JBList<Checker> checkersJBList;
@@ -57,10 +57,8 @@ public class RunConfigurationEditor extends SettingsEditor<InferRunConfiguration
 
     @Override
     protected void resetEditorFrom(@NotNull InferRunConfiguration inferRC) {
-        reloadBuildToolComboBoxList(inferRC);
         additionalArgsTextField.setText(inferRC.getLaunchOptions().getAdditionalArgs());
         this.checkersListModel.replaceAll(inferRC.getLaunchOptions().getSelectedCheckers());
-        this.reactiveModeJBCheckBox.setSelected(inferRC.getLaunchOptions().isReactiveMode());
         reloadInstallationComboBox(inferRC);
 
         this.selectedVersion = inferRC.getLaunchOptions().getSelectedInstallation().getVersion();
@@ -72,7 +70,6 @@ public class RunConfigurationEditor extends SettingsEditor<InferRunConfiguration
         inferRC.getLaunchOptions().setUsingBuildTool((BuildTool) usingBuildToolComboBox.getSelectedItem());
         inferRC.getLaunchOptions().setAdditionalArgs(additionalArgsTextField.getText());
         inferRC.getLaunchOptions().setSelectedCheckers(this.checkersListModel.toList());
-        inferRC.getLaunchOptions().setReactiveMode(this.reactiveModeJBCheckBox.isSelected());
 
         this.selectedVersion = inferRC.getLaunchOptions().getSelectedInstallation().getVersion();
     }
@@ -83,14 +80,6 @@ public class RunConfigurationEditor extends SettingsEditor<InferRunConfiguration
         return mainPanel;
     }
 
-    private void reloadBuildToolComboBoxList(InferRunConfiguration inferRC) {
-        usingBuildToolComboBox.setModel(new DefaultComboBoxModel<>(
-                inferRC.getLaunchOptions().getAvailableBuildTools().toArray(new BuildTool[0])
-        ));
-
-        if(inferRC.getLaunchOptions().getUsingBuildTool() == null) usingBuildToolComboBox.setSelectedItem(BuildToolFactory.getPreferredBuildTool(inferRC.getProject()));
-        else usingBuildToolComboBox.setSelectedItem(inferRC.getLaunchOptions().getUsingBuildTool());
-    }
 
     private void reloadInstallationComboBox(InferRunConfiguration inferRC) {
         inferInstallationComboBox.setModel(

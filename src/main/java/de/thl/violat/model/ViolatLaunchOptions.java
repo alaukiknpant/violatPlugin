@@ -2,33 +2,22 @@ package de.thl.violat.model;
 
 
 
-import com.intellij.AppTopics;
 import com.intellij.execution.ExecutionException;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManagerListener;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.messages.MessageBus;
-import com.intellij.util.messages.MessageBusConnection;
 
 
 import de.thl.violat.config.GlobalSettings;
 import de.thl.violat.model.buildtool.BuildTool;
 import de.thl.violat.model.buildtool.BuildToolFactory;
 
-import de.thl.violat.model.buildtoolchecker.BuildToolChecker;
+import de.thl.violat.model.buildtool.BuildToolChecker;
+import de.thl.violat.model.tester.Testers;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ViolatLaunchOptions {
     private static final Logger log = Logger.getInstance(de.thl.violat.model.ViolatLaunchOptions.class);
@@ -38,13 +27,15 @@ public class ViolatLaunchOptions {
     private List<String> changedFiles = new ArrayList<>();
 
     private List<BuildTool> availableBuildTools;
-    private Boolean fullAnalysis; //if a full analysis was already done after loading the current project/creating the run config
+    private List<Testers> availableTesters;
+//    private Boolean fullAnalysis; //if a full analysis was already done after loading the current project/creating the run config
 
     //Saved Infer Configuration Options
     private ViolatInstallation selectedInstallation;
 //    private BuildTool usingBuildTool;
 //    private String additionalArgs;
     private List<Checker> selectedCheckers;
+    private Testers selectedTester;
     private Boolean reactiveMode;
 
 
@@ -52,10 +43,11 @@ public class ViolatLaunchOptions {
         this.selectedInstallation = GlobalSettings.getInstance().getDefaultInstallation();
 //        this.additionalArgs = "";
         this.selectedCheckers = Checker.getDefaultCheckers();
-        this.reactiveMode = false;
-        this.fullAnalysis = false;
+//        this.reactiveMode = false;
+//        this.fullAnalysis = false;
 //        createChangeFileListener();
         this.availableBuildTools = BuildToolFactory.getApplicableBuildTools(project);
+        this.availableTesters = Testers.getTesters();
     }
 
     /**
@@ -87,8 +79,16 @@ public class ViolatLaunchOptions {
         final String pathToArtifact = GlobalSettings.getInstance().getArtifactSpecs();
 //        if(pathToArtifact == null || pathToSpecs.isEmpty()) throw new ExecutionException("Violat Execution failed: Could not find the JSON specs");
         if (!(pathToArtifact == null) && !pathToSpecs.isEmpty()) {
-            sb.append("-jar").append(" ").append(pathToArtifact);
+            sb.append("--jar").append(" ").append(pathToArtifact).append(" ");
         }
+
+        // Tester
+        final String selectedTester = GlobalSettings.getInstance().getTester();
+        if(selectedTester == null || selectedTester.isEmpty()) throw new ExecutionException("Violat Execution failed: Tester not selected Correctly");
+        if (!(selectedTester == null) && !selectedTester.isEmpty()) {
+            sb.append("--tester").append(" ").append(selectedTester);
+        }
+
 
 
         //Additional Arguments - might not need this because -validaor and histories are plugged in as activation arguments below
@@ -130,42 +130,20 @@ public class ViolatLaunchOptions {
      * Creates a Listener (if one doesn't already exists), which collects all changed files, which are of a compilable type
      * @see BuildTool#FILE_EXTENSIONS
      */
-//    private void createChangeFileListener() {
-//        if(changeListener != null) return;
-//        changeListener = new FileDocumentManagerListener() {
-//            public void beforeDocumentSaving(@NotNull Document document) {
-//                Pattern r = Pattern.compile("(?<=DocumentImpl\\[file://).*?(?=\\])"); //Matches everything between "DocumentImpl[file://" and "]"
-//                Matcher m = r.matcher(document.toString());
-//
-//                if (m.find()) {
-//                    if(m.group(0) != null && BuildTool.FILE_EXTENSIONS.stream().anyMatch((ext) -> m.group(0).endsWith(ext))) {
-//                        changedFiles.add(m.group(0));
-//                    }
-//                }
-//            }
-//        };
-//        MessageBus bus = ApplicationManager.getApplication().getMessageBus();
-//        MessageBusConnection connection = bus.connect();
-//        connection.subscribe(AppTopics.FILE_DOCUMENT_SYNC, changeListener);
-//    }
 
-//    public BuildTool getUsingBuildTool() {
-//        return usingBuildTool;
-//    }
-//    public void setUsingBuildTool(BuildTool usingBuildTool) {
-//        this.usingBuildTool = usingBuildTool;
-//    }
-//    public String getAdditionalArgs() {
-//        return additionalArgs;
-//    }
-//    public void setAdditionalArgs(String additionalArgs) {
-//        this.additionalArgs = additionalArgs;
-//    }
     public List<Checker> getSelectedCheckers() {
         return selectedCheckers;
     }
     public void setSelectedCheckers(List<Checker> selectedCheckers) {
         this.selectedCheckers = selectedCheckers;
+    }
+    public void setSelectedTester(Testers selectedTester) {
+        GlobalSettings.getInstance().addTester(selectedTester);
+        this.selectedTester = selectedTester;
+    }
+
+    public Testers getSelectedTester() {
+        return this.selectedTester;
     }
     public Boolean isReactiveMode() {
         return reactiveMode;
@@ -179,7 +157,13 @@ public class ViolatLaunchOptions {
     public void setSelectedInstallation(ViolatInstallation selectedInstallation) {
         this.selectedInstallation = selectedInstallation;
     }
+
+
     public List<BuildTool> getAvailableBuildTools() {
         return availableBuildTools;
+    }
+
+    public List<Testers> getAvailableTesters() {
+        return availableTesters;
     }
 }

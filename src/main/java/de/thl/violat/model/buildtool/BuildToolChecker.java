@@ -1,4 +1,4 @@
-package de.thl.violat.model.buildtoolchecker;
+package de.thl.violat.model.buildtool;
 
 import java.util.*;
 import java.util.Arrays;

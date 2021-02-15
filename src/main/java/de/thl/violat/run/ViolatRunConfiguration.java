@@ -15,8 +15,8 @@ import de.thl.violat.config.GlobalSettings;
 import de.thl.violat.model.Checker;
 import de.thl.violat.model.ViolatInstallation;
 import de.thl.violat.model.ViolatLaunchOptions;
-import de.thl.violat.model.buildtool.BuildToolFactory;
-import de.thl.violat.model.buildtoolchecker.BuildToolChecker;
+import de.thl.violat.model.buildtool.BuildToolChecker;
+import de.thl.violat.model.tester.TesterChecker;
 import de.thl.violat.ui.RunConfigurationEditor;
 
 import org.jdom.Element;
@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,9 +31,6 @@ import java.util.regex.Pattern;
 public class ViolatRunConfiguration extends RunConfigurationBase {
     private static final String PREFIX = "INTELLIJ_VIOLAT-";
     private static final String INSTALLATION = PREFIX + "INSTALLATION";
-    private static final String BUILD_TOOL = PREFIX + "BUILD_TOOL";
-    private static final String ADDITIONAL_ARGUMENTS = PREFIX + "ADDITIONAL_ARGUMENTS";
-    private static final String ADDITIONAL_ARGUMENTS_PATH = PREFIX + "ADDITIONAL_ARGUMENTS_PATH";
     private static final String CHECKERS = PREFIX + "CHECKERS";
 //    private static final String REACTIVE_MODE = PREFIX + "REACTIVE_MODE";
 
@@ -61,6 +57,7 @@ public class ViolatRunConfiguration extends RunConfigurationBase {
 
 //        if(launchOptions.getUsingBuildTool() == null) throw new RuntimeConfigurationException("No Build Tool Selected"); if(launchOptions.getUsingBuildTool() == null) throw new RuntimeConfigurationException("No Build Tool Selected");
         if (!BuildToolChecker.returnInvalidInstallations()) throw new RuntimeConfigurationException("Java, maven or gradle might be missing");
+        if (!TesterChecker.returnInvalidInstallations()) throw new RuntimeConfigurationException("Java Pathfinder not found in executable path");
         if(launchOptions.getSelectedCheckers() == null || launchOptions.getSelectedCheckers().isEmpty()) throw new RuntimeConfigurationException("No Checker selected");
         if(launchOptions.getSelectedInstallation() == null || !launchOptions.getSelectedInstallation().isConfirmedWorking()) throw new RuntimeConfigurationException("No selected Installation or the Installation is invalid");
         if (launchOptions.getSelectedCheckers().size() > 1) throw new RuntimeConfigurationException("We can have a maximum of 1 Checker");

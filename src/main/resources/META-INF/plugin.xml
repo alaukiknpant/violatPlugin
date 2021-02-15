@@ -33,7 +33,7 @@
 
     <version>1.1.0</version>
 
-<!--    Application Components for Infer-->
+    Application Components for Infer
     <application-components>
         <component>
             <implementation-class>de.thl.intellijinfer.config.GlobalSettings</implementation-class>
@@ -55,13 +55,13 @@
     </application-components>
 
 <!--    Extensions for Infer-->
-    <extensions defaultExtensionNs="com.intellij">
-        <!--suppress PluginXmlValidity -->
-        <toolWindow id="Infer" icon="toolWindowIcon.png" secondary="false" anchor="bottom" factoryClass="de.thl.intellijinfer.ui.MainToolWindowFactory"/>
-        <projectService serviceImplementation="de.thl.intellijinfer.service.ResultParser"/>
-        <configurationType implementation="de.thl.intellijinfer.run.InferConfigurationType"/>
-        <applicationConfigurable provider="de.thl.intellijinfer.config.PluginConfigurableProvider" id="Infer" displayName="Infer"/>
-    </extensions>
+<!--    <extensions defaultExtensionNs="com.intellij">-->
+<!--        &lt;!&ndash;suppress PluginXmlValidity &ndash;&gt;-->
+<!--        <toolWindow id="Infer" icon="toolWindowIcon.png" secondary="false" anchor="bottom" factoryClass="de.thl.intellijinfer.ui.MainToolWindowFactory"/>-->
+<!--        <projectService serviceImplementation="de.thl.intellijinfer.service.ResultParser"/>-->
+<!--        <configurationType implementation="de.thl.intellijinfer.run.InferConfigurationType"/>-->
+<!--        <applicationConfigurable provider="de.thl.intellijinfer.config.PluginConfigurableProvider" id="Infer" displayName="Infer"/>-->
+<!--    </extensions>-->
 
 
 
@@ -77,15 +77,15 @@
     <actions>
 
 <!--        For Infer-->
-        <group id="infer.menu" text="Infer" description="Infer Integration menu">
-            <add-to-group group-id="MainMenu" anchor="last"/>
+<!--        <group id="infer.menu" text="Infer" description="Infer Integration menu">-->
+<!--            <add-to-group group-id="MainMenu" anchor="last"/>-->
 
-            <action id="infer.runaction" class="de.thl.intellijinfer.actions.RunAction" text="Run" description="Runs Infer">
-                <keyboard-shortcut keymap="$default" first-keystroke="control alt G" second-keystroke="R"/>
-            </action>
+<!--            <action id="infer.runaction" class="de.thl.intellijinfer.actions.RunAction" text="Run" description="Runs Infer">-->
+<!--                <keyboard-shortcut keymap="$default" first-keystroke="control alt G" second-keystroke="R"/>-->
+<!--            </action>-->
 
-            <action id="infer.settingsaction" class="de.thl.intellijinfer.actions.SettingsAction" text="Settings" description="Opens Infer settings"/>
-        </group>
+<!--            <action id="infer.settingsaction" class="de.thl.intellijinfer.actions.SettingsAction" text="Settings" description="Opens Infer settings"/>-->
+<!--        </group>-->
 
 
 <!--       For Violat-->

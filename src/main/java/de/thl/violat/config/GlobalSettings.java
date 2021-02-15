@@ -7,6 +7,7 @@ import com.intellij.util.xmlb.annotations.Property;
 import de.thl.violat.model.ArtifactInitializer;
 import de.thl.violat.model.SpecificationInitializer;
 import de.thl.violat.model.ViolatInstallation;
+import de.thl.violat.model.tester.Testers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,6 +29,29 @@ public class GlobalSettings implements PersistentStateComponent<GlobalSettings> 
 
     @Property
     private String pathToArtifact;
+
+    @Property
+    private String tester;
+
+    @Property
+    private List<Testers> availableTesters = Testers.getTesters();
+
+    public boolean addTester(Testers tester) {
+        boolean added = false;
+        if (Testers.getTesters().contains(tester)) {
+            this.tester = tester.getName();
+            added = true;
+        }
+        return added;
+    }
+
+    public String getTester() {
+        //check if a JSON file exists in the given path and whether the JSON file is valid
+        if(this.tester != null) {
+            return tester;
+        }
+        return "";
+    }
 
     // Related to adding JSON Specs
     public boolean addJsonSpecs(String path) {
@@ -175,6 +199,11 @@ public class GlobalSettings implements PersistentStateComponent<GlobalSettings> 
     @NotNull
     public List<ViolatInstallation> getInstallations() {
         return installations;
+    }
+
+    @NotNull
+    public List<Testers> getAvailableTesters() {
+        return availableTesters;
     }
 
     public void setInstallations(List<ViolatInstallation> installations) {

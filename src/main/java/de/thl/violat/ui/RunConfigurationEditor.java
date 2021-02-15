@@ -26,6 +26,7 @@ import de.thl.violat.model.Checker;
 import de.thl.violat.model.ViolatInstallation;
 import de.thl.violat.model.ViolatVersion;
 import de.thl.violat.model.buildtool.BuildTool;
+import de.thl.violat.model.tester.Testers;
 import de.thl.violat.run.ViolatRunConfiguration;
 
 import org.jetbrains.annotations.NotNull;
@@ -41,29 +42,26 @@ import java.util.ResourceBundle;
 public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguration> {
     private JPanel mainPanel;
     private JComboBox<ViolatInstallation> violatInstallationComboBox;
-    private JComboBox<BuildTool> usingBuildToolComboBox;
-    private ExpandableTextField additionalArgsTextField;
-//    private JBCheckBox reactiveModeJBCheckBox;
+    private JComboBox testerComboBox;
     private JBPanel installPanel;
+    private JBPanel testerPanel;
     private JPanel checkersJPanel;
     private JBList<Checker> checkersJBList;
     private CollectionListModel<Checker> checkersListModel;
+    private CollectionListModel<Testers> testersListModel;
     private ViolatVersion selectedVersion; //the current selected version of the infer installation
-
+    private Testers selectedTester; //the current selected version of the infer installation
    //paths
     private TextFieldWithBrowseButton artifactPathChooser;
     private TextFieldWithBrowseButton JSONpathChooser;
-
     //path booleans
     private boolean artifactModified = false;
     private boolean JSONModified = false;
-
     // buttons
     private JButton checkAndAddSpecsButton;
     private JButton checkAndAddArtifactsButton;
     private JButton clearSpecificationsButton;
     private JButton clearArtifactButton;
-    private JButton clearArtifactsButton;
 
 
 
@@ -78,6 +76,18 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
                 checkersListModel.replaceAll(Checker.getDefaultCheckers());
 
                 selectedVersion = ((ViolatInstallation)itemEvent.getItem()).getVersion();
+            }
+        });
+
+        this.testerPanel.setLayout(new OverlayLayout(this.testerPanel));
+
+        testerComboBox.addItemListener(itemEvent -> {
+            if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+                if(selectedTester == null) return; //this happens only when the form was just initialized, so we dont need to do anything
+
+                testersListModel.replaceAll(Testers.getTesters());
+
+                selectedTester = ((Testers)itemEvent.getItem());
             }
         });
 
@@ -131,9 +141,6 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
 //            System.out.println(JSONpathChooser.getText());
 //            System.out.println("\n\n\n");
         });
-
-
-
 
 
         clearSpecificationsButton.addActionListener(e -> {
@@ -206,10 +213,9 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
 
     @Override
     protected void resetEditorFrom(@NotNull ViolatRunConfiguration inferRC) {
-        reloadBuildToolComboBoxList(inferRC);
-//        additionalArgsTextField.setText(inferRC.getLaunchOptions().getAdditionalArgs());
         this.checkersListModel.replaceAll(inferRC.getLaunchOptions().getSelectedCheckers());
 //        this.reactiveModeJBCheckBox.setSelected(inferRC.getLaunchOptions().isReactiveMode());
+        reloadTesterComboBox(inferRC);
         reloadInstallationComboBox(inferRC);
 
         this.selectedVersion = inferRC.getLaunchOptions().getSelectedInstallation().getVersion();
@@ -218,9 +224,11 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
     @Override
     protected void applyEditorTo(@NotNull ViolatRunConfiguration violatRC) {
         if(this.violatInstallationComboBox.isEnabled()) violatRC.getLaunchOptions().setSelectedInstallation((ViolatInstallation) this.violatInstallationComboBox.getSelectedItem());
+        if(this.testerComboBox.isEnabled()) violatRC.getLaunchOptions().setSelectedTester((Testers) this.testerComboBox.getSelectedItem());
 //        violatRC.getLaunchOptions().setUsingBuildTool((BuildTool) usingBuildToolComboBox.getSelectedItem());
 //        violatRC.getLaunchOptions().setAdditionalArgs(additionalArgsTextField.getText());
         violatRC.getLaunchOptions().setSelectedCheckers(this.checkersListModel.toList());
+        violatRC.getLaunchOptions().setSelectedTester((Testers) testerComboBox.getSelectedItem());
 //        violatRC.getLaunchOptions().setReactiveMode(this.reactiveModeJBCheckBox.isSelected());
 
         this.selectedVersion = violatRC.getLaunchOptions().getSelectedInstallation().getVersion();
@@ -232,14 +240,7 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
         return mainPanel;
     }
 
-    private void reloadBuildToolComboBoxList(ViolatRunConfiguration violatRC) {
-        usingBuildToolComboBox.setModel(new DefaultComboBoxModel<>(
-                violatRC.getLaunchOptions().getAvailableBuildTools().toArray(new BuildTool[0])
-        ));
 
-//        if(violatRC.getLaunchOptions().getUsingBuildTool() == null) usingBuildToolComboBox.setSelectedItem(BuildToolFactory.getPreferredBuildTool(violatRC.getProject()));
-//        else usingBuildToolComboBox.setSelectedItem(violatRC.getLaunchOptions().getUsingBuildTool());
-    }
 
     private void reloadInstallationComboBox(ViolatRunConfiguration inferRC) {
         violatInstallationComboBox.setModel(
@@ -274,13 +275,21 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
         }
     }
 
-//    private void getNewCheckerList(Checker selectedChecker, CollectionListModel<Checker> checkersListModel) {
-//        if (checkersListModel.getSize() == 0) {
-//            checkersListModel.add(selectedChecker);
-//        } else {
-//            System.out.println("Checker can have 1 item max");
-//         }
-//        }
+
+    private void reloadTesterComboBox(ViolatRunConfiguration inferRC) {
+        testerComboBox.setModel(
+                new DefaultComboBoxModel<>(
+                        GlobalSettings.getInstance().getAvailableTesters().toArray(new Testers[0])
+                ));
+        testerComboBox.setEnabled(true);
+        testerComboBox.setVisible(true);
+
+        if(testerComboBox.getItemCount() > 0 && inferRC.getLaunchOptions().getSelectedTester() != null) {
+            testerComboBox.setSelectedItem(inferRC.getLaunchOptions().getSelectedTester());
+        }
+    }
+
+
 
     private void checkersAddAction(final AnActionButton button) {
         if(violatInstallationComboBox.getSelectedItem() == null) return;
