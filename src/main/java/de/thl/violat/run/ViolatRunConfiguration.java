@@ -83,7 +83,7 @@ public class ViolatRunConfiguration extends RunConfigurationBase {
         final ViolatInstallation installation = GlobalSettings.getInstance().getInstallationFromPath(JDOMExternalizerUtil.readField(element, INSTALLATION));
         if(installation != null) this.launchOptions.setSelectedInstallation(installation);
 
-        this.launchOptions.setAdditionalArgs(JDOMExternalizerUtil.readField(element, ADDITIONAL_ARGUMENTS));
+//        this.launchOptions.setAdditionalArgs(JDOMExternalizerUtil.readField(element, ADDITIONAL_ARGUMENTS));
 //        this.launchOptions.setReactiveMode(Boolean.valueOf(JDOMExternalizerUtil.readField(element, REACTIVE_MODE)));
 
         final String checkerString = JDOMExternalizerUtil.readField(element, CHECKERS);
@@ -103,7 +103,7 @@ public class ViolatRunConfiguration extends RunConfigurationBase {
         super.writeExternal(element);
 //        if(this.launchOptions.getUsingBuildTool() != null) JDOMExternalizerUtil.writeField(element, BUILD_TOOL, this.launchOptions.getUsingBuildTool().getName());
         if(this.launchOptions.getSelectedInstallation() != null) JDOMExternalizerUtil.writeField(element, INSTALLATION, this.launchOptions.getSelectedInstallation().getPath());
-        JDOMExternalizerUtil.writeField(element, ADDITIONAL_ARGUMENTS, this.launchOptions.getAdditionalArgs());
+//        JDOMExternalizerUtil.writeField(element, ADDITIONAL_ARGUMENTS, this.launchOptions.getAdditionalArgs());
 //        JDOMExternalizerUtil.writeField(element, REACTIVE_MODE, this.launchOptions.isReactiveMode().toString());
 
         StringBuilder sb = new StringBuilder();

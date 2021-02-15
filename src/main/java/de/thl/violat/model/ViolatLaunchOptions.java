@@ -43,14 +43,14 @@ public class ViolatLaunchOptions {
     //Saved Infer Configuration Options
     private ViolatInstallation selectedInstallation;
 //    private BuildTool usingBuildTool;
-    private String additionalArgs;
+//    private String additionalArgs;
     private List<Checker> selectedCheckers;
     private Boolean reactiveMode;
 
 
     public ViolatLaunchOptions(Project project) {
         this.selectedInstallation = GlobalSettings.getInstance().getDefaultInstallation();
-        this.additionalArgs = "";
+//        this.additionalArgs = "";
         this.selectedCheckers = Checker.getDefaultCheckers();
         this.reactiveMode = false;
         this.fullAnalysis = false;
@@ -73,15 +73,27 @@ public class ViolatLaunchOptions {
         StringBuilder sb = new StringBuilder(this.selectedInstallation.getPath());
 
 
-
         //Checkers
         for(Checker checker : selectedCheckers) {
             sb.append(checker.getActivationArgument()).append(" ");
         }
 
+        //Specs
+        final String pathToSpecs = GlobalSettings.getInstance().getJsonSpecs();
+        if(pathToSpecs == null || pathToSpecs.isEmpty()) throw new ExecutionException("Violat Execution failed: Could not find the JSON specs");
+        sb.append(pathToSpecs).append(" ");
+
+        // JAR
+        final String pathToArtifact = GlobalSettings.getInstance().getArtifactSpecs();
+//        if(pathToArtifact == null || pathToSpecs.isEmpty()) throw new ExecutionException("Violat Execution failed: Could not find the JSON specs");
+        if (!(pathToArtifact == null) && !pathToSpecs.isEmpty()) {
+            sb.append("-jar").append(" ").append(pathToArtifact);
+        }
+
+
         //Additional Arguments - might not need this because -validaor and histories are plugged in as activation arguments below
 //        sb.append(" ").append(additionalArgs);
-        sb.append(additionalArgs);
+//        sb.append(additionalArgs);
 
         // There is no de-activation argument for Violat
 //        for(Checker checker : Checker.getMissingCheckers(selectedCheckers, this.selectedInstallation.getVersion())) {
@@ -102,15 +114,15 @@ public class ViolatLaunchOptions {
 //
 //        }
 
-        this.fullAnalysis = true;
-        changedFiles.clear();
+//        this.fullAnalysis = true;
+//        changedFiles.clear();
 
         //Build Tool
 //        final String buildCmd = this.usingBuildTool.getBuildCmd(project);
 //        if(buildCmd == null || buildCmd.isEmpty()) throw new ExecutionException("Violat Execution failed: Could not create a build tool command");
 //        sb.append(buildCmd);
 
-        System.out.println(sb);
+
         return sb.toString();
     }
 
@@ -143,12 +155,12 @@ public class ViolatLaunchOptions {
 //    public void setUsingBuildTool(BuildTool usingBuildTool) {
 //        this.usingBuildTool = usingBuildTool;
 //    }
-    public String getAdditionalArgs() {
-        return additionalArgs;
-    }
-    public void setAdditionalArgs(String additionalArgs) {
-        this.additionalArgs = additionalArgs;
-    }
+//    public String getAdditionalArgs() {
+//        return additionalArgs;
+//    }
+//    public void setAdditionalArgs(String additionalArgs) {
+//        this.additionalArgs = additionalArgs;
+//    }
     public List<Checker> getSelectedCheckers() {
         return selectedCheckers;
     }

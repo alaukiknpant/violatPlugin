@@ -42,12 +42,31 @@ public class GlobalSettings implements PersistentStateComponent<GlobalSettings> 
         return false;
     }
 
+    public void clearJSONSpecs() {
+        //check if a JSON file exists in the given path and whether the JSON file is valid
+        this.pathToSpecs = null;
+    }
+
     public String getJsonSpecs() {
         //check if a JSON file exists in the given path and whether the JSON file is valid
         if(this.pathToSpecs != null) {
             return pathToSpecs;
         }
         return "";
+    }
+
+
+    public String getArtifactSpecs() {
+        //check if a JAR file exists in the given path and whether the JSON file is valid
+        if(this.pathToSpecs != null) {
+            return pathToArtifact;
+        }
+        return "";
+    }
+
+    public void clearArtifacts() {
+        //check if a JSON file exists in the given path and whether the JSON file is valid
+        this.pathToArtifact = null;
     }
 
     public boolean addArtifact(String path) {

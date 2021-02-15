@@ -61,6 +61,9 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
     // buttons
     private JButton checkAndAddSpecsButton;
     private JButton checkAndAddArtifactsButton;
+    private JButton clearSpecificationsButton;
+    private JButton clearArtifactButton;
+    private JButton clearArtifactsButton;
 
 
 
@@ -80,6 +83,8 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
 
         // artifact path chooser
 
+        artifactPathChooser.setText(GlobalSettings.getInstance().getArtifactSpecs());
+
         artifactPathChooser.addActionListener(e -> FileChooser.chooseFile(
                 FileChooserDescriptorFactory.createAllButJarContentsDescriptor(),
                 ProjectUtil.guessCurrentProject(mainPanel),
@@ -93,6 +98,9 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
         });
 
         // Specs path chooser
+        JSONpathChooser.setText(GlobalSettings.getInstance().getJsonSpecs());
+
+
 
         JSONpathChooser.addActionListener(e -> FileChooser.chooseFile(
                 FileChooserDescriptorFactory.createSingleFileDescriptor(),
@@ -124,10 +132,29 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
 //            System.out.println("\n\n\n");
         });
 
+
+
+
+
+        clearSpecificationsButton.addActionListener(e -> {
+            if (GlobalSettings.getInstance().getJsonSpecs() != null) {
+                JSONpathChooser.setText("");
+                GlobalSettings.getInstance().clearJSONSpecs();
+            }
+        });
+
+        clearArtifactButton.addActionListener( e -> {
+            if (GlobalSettings.getInstance().getArtifactSpecs() != null) {
+                artifactPathChooser.setText("");
+                GlobalSettings.getInstance().clearArtifacts();
+            }
+        });
+    }
+
         // We do not have a JB box yet
 //        showInferConsoleJBCheckBox.addActionListener(e -> artifactModified = true);
 
-    }
+
 
 //    private void refreshInstallationList() {
 //        ((DefaultListModel<ViolatInstallation>) this.installationJBList.getModel()).clear();
