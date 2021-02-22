@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class InferConfigurationFactory extends ConfigurationFactory {
-    private static final String FACTORY_NAME = "Infer configuration factory";
+    private static final String FACTORY_NAME = "Violat configuration factory";
 
     InferConfigurationFactory(ConfigurationType type) {
         super(type);
@@ -39,7 +39,7 @@ public class InferConfigurationFactory extends ConfigurationFactory {
     @Nullable
     public static RunnerAndConfigurationSettings createValidConfiguration(RunManagerImpl runManager, String name) {
         if(!GlobalSettings.getInstance().hasValidInstallation()) return null;
-        final ConfigurationFactory inferFactory = runManager.getFactory("InferRunConfiguration", "Infer configuration factory");
+        final ConfigurationFactory inferFactory = runManager.getFactory("ViolatRunConfiguration", "Violat configuration factory");
         if(inferFactory != null) {
             RunnerAndConfigurationSettings rcs = runManager.createConfiguration(name, inferFactory);
 

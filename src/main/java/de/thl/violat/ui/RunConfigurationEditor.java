@@ -6,10 +6,15 @@ import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.ShowSettingsUtil;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.roots.impl.DirectoryIndex;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.CollectionListModel;
 import com.intellij.ui.JBColor;
@@ -18,14 +23,13 @@ import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.fields.ExpandableTextField;
-
+import com.intellij.openapi.module.Module;
 
 import de.thl.violat.config.GlobalSettings;
 import de.thl.violat.config.PluginConfigurable;
 import de.thl.violat.model.Checker;
 import de.thl.violat.model.ViolatInstallation;
 import de.thl.violat.model.ViolatVersion;
-import de.thl.violat.model.buildtool.BuildTool;
 import de.thl.violat.model.tester.Testers;
 import de.thl.violat.run.ViolatRunConfiguration;
 
@@ -38,6 +42,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
 import java.util.ResourceBundle;
+import com.intellij.ide.util.TreeFileChooser;
+import com.intellij.ide.util.TreeFileChooserFactory;
 
 public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguration> {
     private JPanel mainPanel;
@@ -62,7 +68,16 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
     private JButton checkAndAddArtifactsButton;
     private JButton clearSpecificationsButton;
     private JButton clearArtifactButton;
+    private TextFieldWithBrowseButton ADTPathChooser;
 
+
+    private void setChosenFile(VirtualFile virtualFile) {
+        VirtualFile parent = virtualFile.getParent();
+        final Project project = ProjectUtil.guessCurrentProject(null);
+        String qualifier = parent == null ? null : DirectoryIndex.getInstance(project).getPackageName(parent);
+        qualifier = qualifier != null && qualifier.length() != 0 ? qualifier + '.' : "";
+        ADTPathChooser.setText(qualifier + FileUtil.getNameWithoutExtension(virtualFile.getName()));
+    }
 
 
     public RunConfigurationEditor() {
@@ -125,6 +140,39 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
         });
 
 
+
+        // ADT Path Chooser
+        ADTPathChooser.getButton().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                final Project project = ProjectUtil.guessCurrentProject(null);
+                TreeFileChooser fileChooser = TreeFileChooserFactory.getInstance(project).createFileChooser(
+                        ResourceBundle.getBundle("strings").getString("select.ADT"),
+                        null,
+                        null,
+                        new TreeFileChooser.PsiFileFilter() {
+                            public boolean accept(PsiFile file) {
+                                return true;
+                            }
+                        });
+
+                fileChooser.showDialog();
+
+                PsiFile selectedFile = fileChooser.getSelectedFile();
+                if (selectedFile != null) {
+                    System.out.println(selectedFile.getName());
+                    setChosenFile(selectedFile.getVirtualFile());
+                }
+            }
+        });
+
+
+
+
+
+
+
+
+
         //Clicked Add Installation Button
         checkAndAddSpecsButton.addActionListener(e -> {
             final boolean success = GlobalSettings.getInstance().addJsonSpecs(JSONpathChooser.getText());
@@ -170,6 +218,12 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
 //        }
 //    }
 
+
+
+
+
+
+
     private void showArtifactAddInstallationError() {
         final Color oldBg = artifactPathChooser.getBackground();
         artifactPathChooser.setBackground(JBColor.red);
@@ -183,6 +237,8 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
         timer.setRepeats(false);
         timer.start();
     }
+
+
 
     private void showSpecsAddInstallationError() {
         final Color oldBg = JSONpathChooser.getBackground();

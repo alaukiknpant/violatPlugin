@@ -16,7 +16,7 @@ public class InferConfigurationType implements ConfigurationType {
 
     @Override
     public String getConfigurationTypeDescription() {
-        return "Analyze the sourcecode using the Infer static analyzer";
+        return "Analyze the sourcecode using the Violat static analyzer";
     }
 
     @Override
@@ -27,7 +27,7 @@ public class InferConfigurationType implements ConfigurationType {
     @NotNull
     @Override
     public String getId() {
-        return "InferRunConfiguration";
+        return "ViolatRunConfiguration";
     }
 
     @Override

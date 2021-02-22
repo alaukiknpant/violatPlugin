@@ -45,7 +45,7 @@ public class InferProcessListener implements ProcessListener {
 
         } else {
             log.warn("Infer Process terminated unsuccessfully: Status Code " + event.getExitCode());
-            Notifications.Bus.notify(new Notification("Infer", "Failure", "Infer terminated unsuccessfully", NotificationType.ERROR));
+            Notifications.Bus.notify(new Notification("Violat", "Failure", "Infer terminated unsuccessfully", NotificationType.ERROR));
         }
 
         //remove the changedfiles.txt if it exists

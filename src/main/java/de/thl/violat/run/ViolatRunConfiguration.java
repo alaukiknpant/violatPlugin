@@ -119,4 +119,8 @@ public class ViolatRunConfiguration extends RunConfigurationBase {
         return this.launchOptions;
     }
 
+    public Project getCurrentProject() {
+        return this.project;
+    }
+
 }
