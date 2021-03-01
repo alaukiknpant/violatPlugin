@@ -171,17 +171,7 @@
               <text resource-bundle="strings" key="using.tester"/>
             </properties>
           </component>
-          <component id="53bde" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="ADTPathChooser">
-            <constraints>
-              <grid row="2" column="1" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <editable value="true"/>
-              <text value=""/>
-              <toolTipText value=""/>
-            </properties>
-          </component>
-          <component id="9f11" class="javax.swing.JButton">
+          <component id="9f11" class="javax.swing.JButton" binding="checkAndAddADTButton">
             <constraints>
               <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="1" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -189,7 +179,7 @@
               <text resource-bundle="strings" key="add.and.check.ADT"/>
             </properties>
           </component>
-          <component id="a8910" class="javax.swing.JButton" default-binding="true">
+          <component id="a8910" class="javax.swing.JButton" binding="clearADTButton">
             <constraints>
               <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -203,6 +193,16 @@
             </constraints>
             <properties>
               <text resource-bundle="strings" key="choose.ADT"/>
+            </properties>
+          </component>
+          <component id="53bde" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="ADTPathChooser">
+            <constraints>
+              <grid row="2" column="1" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <editable value="true"/>
+              <text value=""/>
+              <toolTipText value=""/>
             </properties>
           </component>
         </children>

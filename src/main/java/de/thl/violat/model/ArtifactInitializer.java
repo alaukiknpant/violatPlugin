@@ -40,6 +40,7 @@ public class ArtifactInitializer {
     public void setPath(String path) {
         if(path.endsWith(".jar")) this.path = path;
     }
+    public String getPath() {return this.path;}
 
 }
 

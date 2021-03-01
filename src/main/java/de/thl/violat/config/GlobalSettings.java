@@ -5,6 +5,7 @@ import com.intellij.openapi.components.*;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Property;
 import de.thl.violat.model.ArtifactInitializer;
+import de.thl.violat.model.ClassInitializer;
 import de.thl.violat.model.SpecificationInitializer;
 import de.thl.violat.model.ViolatInstallation;
 import de.thl.violat.model.tester.Testers;
@@ -14,8 +15,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-//@State(name = "ViolatApplicationSettings", storages = {@Storage("$APP_CONFIG$/violat.xml")})
-@State(name = "InferApplicationSettings", storages = {@Storage("$APP_CONFIG$/infer.xml")})
+@State(name = "ViolatApplicationSettings", storages = {@Storage("$APP_CONFIG$/violat.xml")})
+//@State(name = "InferApplicationSettings", storages = {@Storage("$APP_CONFIG$/infer.xml")})
 public class GlobalSettings implements PersistentStateComponent<GlobalSettings> {
 
     @Property
@@ -29,6 +30,9 @@ public class GlobalSettings implements PersistentStateComponent<GlobalSettings> 
 
     @Property
     private String pathToArtifact;
+
+    @Property
+    private String pathToClass;
 
     @Property
     private String tester;
@@ -82,8 +86,16 @@ public class GlobalSettings implements PersistentStateComponent<GlobalSettings> 
 
     public String getArtifactSpecs() {
         //check if a JAR file exists in the given path and whether the JSON file is valid
-        if(this.pathToSpecs != null) {
+        if(this.pathToArtifact != null) {
             return pathToArtifact;
+        }
+        return "";
+    }
+
+    public String getPathToClass() {
+        //check if a JAR file exists in the given path and whether the JSON file is valid
+        if(this.pathToClass != null) {
+            return pathToClass;
         }
         return "";
     }
@@ -93,6 +105,11 @@ public class GlobalSettings implements PersistentStateComponent<GlobalSettings> 
         this.pathToArtifact = null;
     }
 
+    public void clearClass() {
+        //check if a JSON file exists in the given path and whether the JSON file is valid
+        this.pathToClass = null;
+    }
+
     public boolean addArtifact(String path) {
         //check if a JSON file exists in the given path and whether the JSON file is valid
         ArtifactInitializer artifact = ArtifactInitializer.createArtifactInitializer(path);
@@ -100,6 +117,17 @@ public class GlobalSettings implements PersistentStateComponent<GlobalSettings> 
 
         if(artifact != null) {
             pathToArtifact = path;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean addClass(String path) {
+        //check if a JSON file exists in the given path and whether the JSON file is valid
+        ClassInitializer cls = ClassInitializer.createClassInitializer(path);
+        System.out.println("path:" + path);
+        if(cls != null) {
+            pathToClass = path;
             return true;
         }
         return false;

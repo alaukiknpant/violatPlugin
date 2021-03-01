@@ -33,18 +33,17 @@
 
     <version>1.1.0</version>
 
-    Application Components for Infer
-    <application-components>
-        <component>
-            <implementation-class>de.thl.intellijinfer.config.GlobalSettings</implementation-class>
-        </component>
-        <component>
-            <implementation-class>de.thl.intellijinfer.config.DefaultConfigComponent</implementation-class>
-        </component>
-    </application-components>
+<!--    Application Components for Infer-->
+<!--    <application-components>-->
+<!--        <component>-->
+<!--            <implementation-class>de.thl.intellijinfer.config.GlobalSettings</implementation-class>-->
+<!--        </component>-->
+<!--        <component>-->
+<!--            <implementation-class>de.thl.intellijinfer.config.DefaultConfigComponent</implementation-class>-->
+<!--        </component>-->
+<!--    </application-components>-->
 
-
-    <!--    Application Components for Violat-->
+    Application Components for Violat
     <application-components>
         <component>
             <implementation-class>de.thl.violat.config.GlobalSettings</implementation-class>
@@ -53,6 +52,17 @@
             <implementation-class>de.thl.violat.config.DefaultConfigComponent</implementation-class>
         </component>
     </application-components>
+
+
+<!--    &lt;!&ndash;    Application Components for Violat&ndash;&gt;-->
+<!--    <application-components>-->
+<!--        <component>-->
+<!--            <implementation-class>de.thl.violat.config.GlobalSettings</implementation-class>-->
+<!--        </component>-->
+<!--        <component>-->
+<!--            <implementation-class>de.thl.violat.config.DefaultConfigComponent</implementation-class>-->
+<!--        </component>-->
+<!--    </application-components>-->
 
 <!--    Extensions for Infer-->
 <!--    <extensions defaultExtensionNs="com.intellij">-->

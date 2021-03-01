@@ -5,10 +5,7 @@ import com.github.cliftonlabs.json_simple.JsonObject;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -64,23 +61,28 @@ public class GetSpecs {
 
     }
 
-    public static void main(String args[]) throws ClassNotFoundException {
+//    public static void main(String args[]) throws ClassNotFoundException {
 //        Class cls = Class.forName("java.util.concurrent.LinkedBlockingDeque");
 //        String className = cls.getName();
 //        System.out.println(className);
-        JsonObject j = getSpecs("com.foo.QueueSynchronized");
-        System.out.println(j.toJson());
 
-
-
-
-
-        try (FileWriter file = new FileWriter("QueueSynchronized.json")) {
-            file.write(j.toJson());
-            file.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//
+//        String s = "a,b,c,d,e,.........";
+//        List<String> arr = Arrays.asList(s.split(","));
+//        System.out.println(arr.toString());
+//        System.out.println(arr.get(0));
+//
+//
+//        JsonObject j = getSpecs("com.foo.QueueSynchronized");
+//        System.out.println(j.toJson());
+//
+//
+//        try (FileWriter file = new FileWriter("QueueSynchronized.json")) {
+//            file.write(j.toJson());
+//            file.flush();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
 

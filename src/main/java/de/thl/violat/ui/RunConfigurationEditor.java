@@ -27,9 +27,7 @@ import com.intellij.openapi.module.Module;
 
 import de.thl.violat.config.GlobalSettings;
 import de.thl.violat.config.PluginConfigurable;
-import de.thl.violat.model.Checker;
-import de.thl.violat.model.ViolatInstallation;
-import de.thl.violat.model.ViolatVersion;
+import de.thl.violat.model.*;
 import de.thl.violat.model.tester.Testers;
 import de.thl.violat.run.ViolatRunConfiguration;
 
@@ -40,6 +38,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.List;
 import java.util.ResourceBundle;
 import com.intellij.ide.util.TreeFileChooser;
@@ -69,13 +68,22 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
     private JButton clearSpecificationsButton;
     private JButton clearArtifactButton;
     private TextFieldWithBrowseButton ADTPathChooser;
+    private JButton checkAndAddADTButton;
+    private JButton clearADTButton;
+    private String pathToClass;
 
 
     private void setChosenFile(VirtualFile virtualFile) {
         VirtualFile parent = virtualFile.getParent();
         final Project project = ProjectUtil.guessCurrentProject(null);
+        System.out.println(project.getBasePath());
+        System.out.println("\n\n\n\n\n");
         String qualifier = parent == null ? null : DirectoryIndex.getInstance(project).getPackageName(parent);
         qualifier = qualifier != null && qualifier.length() != 0 ? qualifier + '.' : "";
+        System.out.println(qualifier);
+        System.out.println(virtualFile.getPath());
+        System.out.println("\n\n\n\n\n");
+        pathToClass = virtualFile.getPath();
         ADTPathChooser.setText(qualifier + FileUtil.getNameWithoutExtension(virtualFile.getName()));
     }
 
@@ -204,7 +212,49 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
                 GlobalSettings.getInstance().clearArtifacts();
             }
         });
+
+        // Check and Add ADT
+        checkAndAddADTButton.addActionListener(e -> {
+            final boolean success = GlobalSettings.getInstance().addClass(ADTPathChooser.getText());
+            System.out.println("hereie\n");
+            System.out.println(pathToClass);
+            if(!success || pathToClass == null) showClassAddInstallationError();
+            else {
+                System.out.println("RRree\n");
+//                try {
+//                    ClassInitializer.generateSpecs(ADTPathChooser.getText());
+//                    showPathAddedSucessfully(ADTPathChooser, checkAndAddADTButton);
+//                } catch (ClassNotFoundException classNotFoundException) {
+//                    classNotFoundException.printStackTrace();
+//                    System.out.println("NOOOO \n\n\n\n\n");
+//                }
+//                ClassInitializer.generateSpecs(ADTPathChooser.getText());
+                String packages = ADTPathChooser.getText();
+                try {
+                    String pathToJar = ClassInitializer.compileClassAndCreateJar(pathToClass, packages);
+                    ArtifactInitializer artifact = ArtifactInitializer.createArtifactInitializer(pathToJar);
+                    artifactPathChooser.setText(artifact.getPath());
+                    showPathAddedSucessfully(ADTPathChooser, checkAndAddADTButton);
+
+                } catch (IOException | InterruptedException ioException) {
+
+                    ioException.printStackTrace();
+                }
+
+            }
+//            System.out.println(JSONpathChooser.getText());
+//            System.out.println("\n\n\n");
+        });
+
+        clearADTButton.addActionListener( e -> {
+            if (GlobalSettings.getInstance().getPathToClass() != null) {
+                ADTPathChooser.setText("");
+                GlobalSettings.getInstance().clearClass();
+            }
+        });
+
     }
+
 
         // We do not have a JB box yet
 //        showInferConsoleJBCheckBox.addActionListener(e -> artifactModified = true);
@@ -220,7 +270,19 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
 
 
 
-
+    private void showClassAddInstallationError() {
+        final Color oldBg = ADTPathChooser.getBackground();
+        ADTPathChooser.setBackground(JBColor.red);
+        checkAndAddADTButton.setEnabled(false);
+        ADTPathChooser.setText(ResourceBundle.getBundle("strings").getString("invalid.adt.selected"));
+        Timer timer = new Timer(3000, actionEvent -> {
+            ADTPathChooser.setBackground(oldBg);
+            checkAndAddADTButton.setEnabled(true);
+            ADTPathChooser.setText("");
+        });
+        timer.setRepeats(false);
+        timer.start();
+    }
 
 
 
