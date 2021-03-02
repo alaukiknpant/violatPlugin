@@ -232,11 +232,19 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
                 String packages = ADTPathChooser.getText();
                 try {
                     String pathToJar = ClassInitializer.compileClassAndCreateJar(pathToClass, packages);
+                    String pathToSpecFile = ClassInitializer.createSpecsFolder(pathToClass, packages);
+                    Class cls = ClassInitializer.loadClass(pathToClass, packages);
+
                     ArtifactInitializer artifact = ArtifactInitializer.createArtifactInitializer(pathToJar);
+                    ClassInitializer classIns = ClassInitializer.createClassInitializer(pathToClass);
+
+                    boolean generatedSpecs = ClassInitializer.generateSpecs(cls, pathToSpecFile);
+
+                    JSONpathChooser.setText(pathToSpecFile);
                     artifactPathChooser.setText(artifact.getPath());
                     showPathAddedSucessfully(ADTPathChooser, checkAndAddADTButton);
 
-                } catch (IOException | InterruptedException ioException) {
+                } catch (IOException | InterruptedException | ClassNotFoundException ioException) {
 
                     ioException.printStackTrace();
                 }

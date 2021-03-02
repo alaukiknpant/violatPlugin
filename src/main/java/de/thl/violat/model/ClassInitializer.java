@@ -15,6 +15,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 public class ClassInitializer {
     private static final Logger log = Logger.getInstance(de.thl.violat.model.SpecificationInitializer.class);
@@ -51,64 +53,75 @@ public class ClassInitializer {
          this.path = path;
     }
 
-    public static void generateSpecs(String path) throws ClassNotFoundException {
-        if (path != null) {
-            JsonObject j = GetSpecs.getSpecs(path);
+    public static boolean generateSpecs(Class cls, String pathToSpecFile) throws ClassNotFoundException {
+        boolean createdSpecFile = false;
+        if (cls != null) {
+            JsonObject j = GetSpecs.getSpecs(cls);
 
-            try (FileWriter file = new FileWriter("Spec.json")) {
+            try (FileWriter file = new FileWriter(pathToSpecFile)) {
                 file.write(j.toJson());
                 file.flush();
+                createdSpecFile = true;
             } catch (IOException e) {
-                System.out.println("Noo canot generate Specs -- here\n\n\n\n\n");
+                System.out.println("Noo canot generate Specs \n\n\n\n\n");
                 e.printStackTrace();
             }
         }
+        return createdSpecFile;
     }
-
-//    public static void compileClassAndCreateJar(String path, String packages) throws IOException {
-//        // Compile the java class
-//        Process compileProcess = new ProcessBuilder("javac", path).start();
-//
-//        // Create a jar file through scripting
-//        String mainPackage = packages.split("\\.")[0];
-//        String jarName = mainPackage + ".jar";
-//        String jarPath = path.substring(0, path.indexOf(mainPackage)) + mainPackage;
-//        Process artifactProcess = new ProcessBuilder("jar", "cvf", jarName, path).start();
-//
-//        // Remove the compiled java class
-//        String pathToClassFile = path.substring(0, path.indexOf(".java")) + ".class";
-//        Process removeProcess = new ProcessBuilder("rm", pathToClassFile).start();
-//    }
-
 
 
     public static String compileClassAndCreateJar(String path, String packages) throws IOException, InterruptedException {
-
         // Compile the java class
         Process compileProcess = new ProcessBuilder("javac", path).start();
         compileProcess.waitFor();
-
         // Create a jar file through scripting
         String mainPackage = packages.split("\\.")[0];
-
         String basePath = path.substring(0, path.indexOf(mainPackage));
         String mainPackagePath = basePath + mainPackage;
         String jarName = mainPackage + ".jar";
         String pathToJarFolder = basePath + "jarFiles/";
         String jarPath = pathToJarFolder + jarName;
-        System.out.println(jarPath);
-        System.out.println("\n\n\n\n\n");
         Process makeJarFolderProcess = new ProcessBuilder("mkdir", pathToJarFolder).start();
         makeJarFolderProcess.waitFor();
-        Process artifactProcess = new ProcessBuilder("jar", "cvf", jarPath, mainPackagePath).start();
-        artifactProcess.waitFor();
 
+
+        Process artifactProcess = null;
+        ProcessBuilder pb = new ProcessBuilder("jar", "cvf", jarPath, mainPackage);
+        pb.directory(new File(basePath));
+        System.out.println(basePath);
+        System.out.println("\n\n\n\n\n");
+        artifactProcess = pb.start();
+        artifactProcess.waitFor();
+        return jarPath;
+    }
+
+    public static Class loadClass(String path, String packageName) throws IOException, ClassNotFoundException {
+        String mainPackage = packageName.split("\\.")[0];
+        String basePath = path.substring(0, path.indexOf(mainPackage));
+        Class cls = new URLClassLoader(new URL[]{new File(basePath).toURI().toURL()}).loadClass(packageName);
+        return cls;
+    }
+
+    public static void deleteClass(String path) throws IOException, InterruptedException {
         // Remove the compiled java class
         String pathToClassFile = path.substring(0, path.indexOf(".java")) + ".class";
         Process removeProcess = new ProcessBuilder("rm", pathToClassFile).start();
-
         removeProcess.waitFor();
-        return jarPath;
+    }
+
+    public static String createSpecsFolder(String path, String packages) throws InterruptedException, IOException {
+
+        // Create a specs folder through scripting
+        String mainPackage = packages.split("\\.")[0];
+        String basePath = path.substring(0, path.indexOf(mainPackage));
+        String mainPackagePath = basePath + mainPackage;
+        String specName = mainPackage + ".json";
+        String pathToSpecFolder = basePath + "specFiles/";
+        Process makeJarFolderProcess = new ProcessBuilder("mkdir", pathToSpecFolder).start();
+        makeJarFolderProcess.waitFor();
+        String pathToSpec = pathToSpecFolder + specName;
+        return pathToSpec;
     }
 
 }

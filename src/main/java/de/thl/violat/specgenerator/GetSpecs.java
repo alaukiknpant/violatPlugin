@@ -14,8 +14,8 @@ public class GetSpecs {
     public GetSpecs() {
     }
 
-    public static JsonObject getSpecs(String methodName) throws ClassNotFoundException {
-        Class cls = Class.forName(methodName);
+    public static JsonObject getSpecs(Class cls) throws ClassNotFoundException {
+//        Class cls = Class.forName(methodName);
 //        Package pack = cls.getPackage();
 //        String packageName = pack.getName();
         String className = cls.getName();
@@ -46,17 +46,12 @@ public class GetSpecs {
                 String parameter_name = parameterType.getName();
                 pars.add(parameter_name);
             }
-            System.out.println("\n");
             boolean isReturnVoid = methods[i].getReturnType().equals(Void.TYPE);
-
-
-
             Methoed m = new Methoed(method_name, pars, isReturnVoid, true, true, "complete");
             methoeds[i] = m;
         }
 
         ClassJSON c = new ClassJSON(className, 3, methoeds);
-
         return c.classToJSON();
 
     }
