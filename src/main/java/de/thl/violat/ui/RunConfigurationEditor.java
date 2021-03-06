@@ -22,8 +22,6 @@ import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBPanel;
-import com.intellij.ui.components.fields.ExpandableTextField;
-import com.intellij.openapi.module.Module;
 
 import de.thl.violat.config.GlobalSettings;
 import de.thl.violat.config.PluginConfigurable;
@@ -133,8 +131,6 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
         // Specs path chooser
         JSONpathChooser.setText(GlobalSettings.getInstance().getJsonSpecs());
 
-
-
         JSONpathChooser.addActionListener(e -> FileChooser.chooseFile(
                 FileChooserDescriptorFactory.createSingleFileDescriptor(),
                 ProjectUtil.guessCurrentProject(mainPanel),
@@ -150,6 +146,8 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
 
 
         // ADT Path Chooser
+        ADTPathChooser.setText(GlobalSettings.getInstance().getADTSpecs());
+
         ADTPathChooser.getButton().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 final Project project = ProjectUtil.guessCurrentProject(null);
@@ -173,12 +171,11 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
             }
         });
 
-
-
-
-
-
-
+        ADTPathChooser.getTextField().getDocument().addDocumentListener(new DocumentListener() {
+            @Override public void insertUpdate(DocumentEvent e) {JSONModified = true;}
+            @Override public void removeUpdate(DocumentEvent e) {JSONModified = true;}
+            @Override public void changedUpdate(DocumentEvent e) {JSONModified = true;}
+        });
 
 
         //Clicked Add Installation Button
@@ -216,42 +213,16 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
         // Check and Add ADT
         checkAndAddADTButton.addActionListener(e -> {
             final boolean success = GlobalSettings.getInstance().addClass(ADTPathChooser.getText());
-            System.out.println("hereie\n");
+            System.out.println("In check and Add ADT button\n");
             System.out.println(pathToClass);
             if(!success || pathToClass == null) showClassAddInstallationError();
             else {
-                System.out.println("RRree\n");
-//                try {
-//                    ClassInitializer.generateSpecs(ADTPathChooser.getText());
-//                    showPathAddedSucessfully(ADTPathChooser, checkAndAddADTButton);
-//                } catch (ClassNotFoundException classNotFoundException) {
-//                    classNotFoundException.printStackTrace();
-//                    System.out.println("NOOOO \n\n\n\n\n");
-//                }
-//                ClassInitializer.generateSpecs(ADTPathChooser.getText());
+                System.out.println("ADT added sucessfully\n");
                 String packages = ADTPathChooser.getText();
-                try {
-                    String pathToJar = ClassInitializer.compileClassAndCreateJar(pathToClass, packages);
-                    String pathToSpecFile = ClassInitializer.createSpecsFolder(pathToClass, packages);
-                    Class cls = ClassInitializer.loadClass(pathToClass, packages);
-
-                    ArtifactInitializer artifact = ArtifactInitializer.createArtifactInitializer(pathToJar);
-                    ClassInitializer classIns = ClassInitializer.createClassInitializer(pathToClass);
-
-                    boolean generatedSpecs = ClassInitializer.generateSpecs(cls, pathToSpecFile);
-
-                    JSONpathChooser.setText(pathToSpecFile);
-                    artifactPathChooser.setText(artifact.getPath());
-                    showPathAddedSucessfully(ADTPathChooser, checkAndAddADTButton);
-
-                } catch (IOException | InterruptedException | ClassNotFoundException ioException) {
-
-                    ioException.printStackTrace();
-                }
+                addADTAndGenerateSpecs(packages);
 
             }
-//            System.out.println(JSONpathChooser.getText());
-//            System.out.println("\n\n\n");
+
         });
 
         clearADTButton.addActionListener( e -> {
@@ -263,8 +234,26 @@ public class RunConfigurationEditor extends SettingsEditor<ViolatRunConfiguratio
 
     }
 
+    private void addADTAndGenerateSpecs(String packages) {
+        try {
+            String pathToJar = ClassInitializer.compileClassAndCreateJar(pathToClass, packages);
+            String pathToSpecFile = ClassInitializer.createSpecsFolder(pathToClass, packages);
+            Class cls = ClassInitializer.loadClass(pathToClass, packages);
+            ArtifactInitializer artifact = ArtifactInitializer.createArtifactInitializer(pathToJar);
+            ClassInitializer classIns = ClassInitializer.createClassInitializer(pathToClass);
+            boolean generatedSpecs = ClassInitializer.generateSpecs(cls, pathToSpecFile);
+            JSONpathChooser.setText(pathToSpecFile);
+            artifactPathChooser.setText(artifact.getPath());
+            showPathAddedSucessfully(ADTPathChooser, checkAndAddADTButton);
 
-        // We do not have a JB box yet
+        } catch (IOException | InterruptedException | ClassNotFoundException ioException) {
+
+            ioException.printStackTrace();
+        }
+    }
+
+
+    // We do not have a JB box yet
 //        showInferConsoleJBCheckBox.addActionListener(e -> artifactModified = true);
 
 

@@ -79,7 +79,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <!--suppress PluginXmlValidity -->
         <toolWindow id="Violat" icon="toolWindowIcon.png" secondary="false" anchor="bottom" factoryClass="de.thl.violat.ui.MainToolWindowFactory"/>
-<!--        <projectService serviceImplementation="de.thl.intellijinfer.service.ResultParser"/>-->
+        <projectService serviceImplementation="de.thl.violat.service.ResultParser"/>
         <configurationType implementation="de.thl.violat.run.ViolatConfigurationType"/>
         <applicationConfigurable provider="de.thl.violat.config.PluginConfigurableProvider" id="Violat" displayName="Violat"/>
     </extensions>

@@ -92,6 +92,14 @@ public class GlobalSettings implements PersistentStateComponent<GlobalSettings> 
         return "";
     }
 
+    public String getADTSpecs() {
+        //check if a JAR file exists in the given path and whether the JSON file is valid
+        if(this.pathToClass != null) {
+            return pathToClass;
+        }
+        return "";
+    }
+
     public String getPathToClass() {
         //check if a JAR file exists in the given path and whether the JSON file is valid
         if(this.pathToClass != null) {

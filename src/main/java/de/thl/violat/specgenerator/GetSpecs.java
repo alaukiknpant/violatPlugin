@@ -27,22 +27,15 @@ public class GetSpecs {
             methods1.add(methods[idx]);
             idx++;
         }
-
         methods = methods1.toArray(new Method[0]);
-
         Methoed[] methoeds = new Methoed[methods.length];
-//        System.out.println(methods.length);
-
         for (int i = 0; i < methods.length; i++) {
-//            System.out.println(i);
             String method_name = methods[i].getName();
             System.out.println(method_name);
-
             Class[] parameters = methods[i].getParameterTypes();
             ArrayList<String> pars = new ArrayList<String>(parameters.length);
             for (int q = 0; q < parameters.length; q++) {
                 Class parameterType = parameters[q];
-//                System.out.println(parameterType.getName());
                 String parameter_name = parameterType.getName();
                 pars.add(parameter_name);
             }
@@ -50,11 +43,27 @@ public class GetSpecs {
             Methoed m = new Methoed(method_name, pars, isReturnVoid, true, true, "complete");
             methoeds[i] = m;
         }
-
         ClassJSON c = new ClassJSON(className, 3, methoeds);
         return c.classToJSON();
-
     }
+
+//    public static String[] getParameters(String parameter) {
+//        switch(parameter) {
+//            case "invocations":
+//                // code block
+//                break;
+//            case "is_readonly":
+//                // code block
+//                break;
+//            case "is_trusted":
+//            // code block
+//            break;
+//
+//            default:
+//                // code block
+//        }
+//    }
+
 
 //    public static void main(String args[]) throws ClassNotFoundException {
 //        Class cls = Class.forName("java.util.concurrent.LinkedBlockingDeque");

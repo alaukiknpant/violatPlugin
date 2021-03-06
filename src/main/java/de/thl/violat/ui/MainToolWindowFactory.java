@@ -4,7 +4,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
-import de.thl.intellijinfer.ui.MainToolWindow;
+import de.thl.violat.ui.MainToolWindow;
 import org.jetbrains.annotations.NotNull;
 
 public class MainToolWindowFactory implements ToolWindowFactory {

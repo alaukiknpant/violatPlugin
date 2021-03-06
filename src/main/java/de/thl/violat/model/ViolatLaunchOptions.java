@@ -121,9 +121,9 @@ public class ViolatLaunchOptions {
 //        final String buildCmd = this.usingBuildTool.getBuildCmd(project);
 //        if(buildCmd == null || buildCmd.isEmpty()) throw new ExecutionException("Violat Execution failed: Could not create a build tool command");
 //        sb.append(buildCmd);
+        String result = sb.toString() + " >&1 | tee result.txt";
 
-
-        return sb.toString();
+        return result;
     }
 
     /**

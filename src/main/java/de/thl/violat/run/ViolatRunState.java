@@ -35,11 +35,16 @@ public class ViolatRunState extends CommandLineState {
 
         GeneralCommandLine commandLine = new GeneralCommandLine("/bin/sh", "-c", runCmd);
 
+
+
         if(runCfg.getProject().getBasePath() == null) throw new ExecutionException("Could not acquire the project base path");
         commandLine.setWorkDirectory(new File(runCfg.getProject().getBasePath()));
 
         ProcessHandler ph = new ColoredProcessHandler(commandLine);
         ph.addProcessListener(new ViolatProcessListener(runCfg.getProject()));
+
+
+
         return ph;
     }
 }

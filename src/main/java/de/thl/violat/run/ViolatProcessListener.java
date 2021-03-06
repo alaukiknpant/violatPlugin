@@ -13,10 +13,17 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.wm.ToolWindowManager;
 
 import de.thl.violat.config.GlobalSettings;
-//import de.thl.violat.service.ResultParser;
+import de.thl.violat.service.ResultParser;
 
 
 import org.jetbrains.annotations.NotNull;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 
 public class ViolatProcessListener implements ProcessListener {
@@ -36,12 +43,14 @@ public class ViolatProcessListener implements ProcessListener {
 
             //Open the Infer Tool Window, which needs to be done in an AWT Event Dispatcher Thread
             if(!GlobalSettings.getInstance().isShowConsole()) { //if the user wants the console to stay in focus, we dont want to open the infer tool window
+
+
                 ApplicationManager.getApplication().invokeAndWait(() -> ToolWindowManager.getInstance(project).getToolWindow("Violat").activate(null, true));
             }
 
-//            final Path reportPath = Paths.get(project.getBasePath() + "/infer-out/report.json");
-//            if(Files.exists(reportPath)) ResultParser.getInstance(project).parse(reportPath);
-//            else log.error("report.json does not exist after Infer terminated successfully: Check the Infer log");
+            final Path reportPath = Paths.get(project.getBasePath() + "/result.txt");
+            if(Files.exists(reportPath)) ResultParser.getInstance(project).parse(reportPath);
+            else log.error("result.txt does not exist after Violat terminated successfully: Check the Violat log");
 
         } else {
             log.warn("Violat Process terminated unsuccessfully: Status Code " + event.getExitCode());
