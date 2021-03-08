@@ -4,7 +4,6 @@ package de.thl.violat.run;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.openapi.util.IconLoader;
-import de.thl.violat.run.ViolatConfigurationFactory;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -23,7 +22,7 @@ public class ViolatConfigurationType implements ConfigurationType {
 
     @Override
     public Icon getIcon() {
-        return IconLoader.getIcon("/META-INF/pluginIcon.svg");
+        return IconLoader.getIcon("/META-INF/violatLogo.svg");
     }
 
     @NotNull
