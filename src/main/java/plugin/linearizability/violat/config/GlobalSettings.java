@@ -1,16 +1,18 @@
 package plugin.linearizability.violat.config;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Property;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import plugin.linearizability.violat.model.ArtifactInitializer;
 import plugin.linearizability.violat.model.ClassInitializer;
 import plugin.linearizability.violat.model.SpecificationInitializer;
 import plugin.linearizability.violat.model.ViolatInstallation;
 import plugin.linearizability.violat.model.tester.Testers;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -208,7 +210,7 @@ public class GlobalSettings implements PersistentStateComponent<GlobalSettings> 
     }
 
     /**
-     * Returns the Installation at the given path
+     * Returns the Installation of Violat if given a path
      * @param path The given path
      * @return A Installation if it exists at that path, otherwise null
      */

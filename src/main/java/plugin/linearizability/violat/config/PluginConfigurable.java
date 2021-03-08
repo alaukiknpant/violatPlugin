@@ -18,7 +18,7 @@ public class PluginConfigurable implements Configurable {
     @Nls(capitalization = Nls.Capitalization.Title)
     @Override
     public String getDisplayName() {
-        return "Infer";
+        return "Violat";
     }
 
     @Nullable
@@ -41,7 +41,6 @@ public class PluginConfigurable implements Configurable {
     public void apply() {
         if(this.form == null) return;
         this.form.setModified(false);
-
 //        this.settings.setShowConsole(this.form.isShowConsole());
     }
 
