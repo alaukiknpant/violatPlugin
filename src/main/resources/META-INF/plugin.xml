@@ -10,10 +10,10 @@
     Application Components for Violat
     <application-components>
         <component>
-            <implementation-class>de.thl.violat.config.GlobalSettings</implementation-class>
+            <implementation-class>plugin.linearizability.violat.config.GlobalSettings</implementation-class>
         </component>
         <component>
-            <implementation-class>de.thl.violat.config.DefaultConfigComponent</implementation-class>
+            <implementation-class>plugin.linearizability.violat.config.DefaultConfigComponent</implementation-class>
         </component>
     </application-components>
 
@@ -21,19 +21,19 @@
     Extensions for Violat
     <extensions defaultExtensionNs="com.intellij">
         <!--suppress PluginXmlValidity -->
-        <toolWindow id="Violat" icon="violatWindowLogo.svg" secondary="false" anchor="bottom" factoryClass="de.thl.violat.ui.MainToolWindowFactory"/>
-        <projectService serviceImplementation="de.thl.violat.service.ResultParser"/>
-        <configurationType implementation="de.thl.violat.run.ViolatConfigurationType"/>
-        <applicationConfigurable provider="de.thl.violat.config.PluginConfigurableProvider" id="Violat" displayName="Violat"/>
+        <toolWindow id="Violat" icon="violatWindowLogo.svg" secondary="false" anchor="bottom" factoryClass="plugin.linearizability.violat.ui.MainToolWindowFactory"/>
+        <projectService serviceImplementation="plugin.linearizability.violat.service.ResultParser"/>
+        <configurationType implementation="plugin.linearizability.violat.run.ViolatConfigurationType"/>
+        <applicationConfigurable provider="plugin.linearizability.violat.config.PluginConfigurableProvider" id="Violat" displayName="Violat"/>
     </extensions>
 
     <actions>
         <group id="violat.menu" text="Violat" description="Violat Integration menu">
             <add-to-group group-id="MainMenu" anchor="last"/>
-            <action id="violat.runaction" class="de.thl.violat.actions.RunAction" text="Run" description="Runs Violat">
+            <action id="violat.runaction" class="plugin.linearizability.violat.actions.RunAction" text="Run" description="Runs Violat">
                 <keyboard-shortcut keymap="$default" first-keystroke="control alt G" second-keystroke="R"/>
             </action>
-            <action id="violat.settingsaction" class="de.thl.violat.actions.SettingsAction" text="Settings" description="Opens Violat settings"/>
+            <action id="violat.settingsaction" class="plugin.linearizability.violat.actions.SettingsAction" text="Settings" description="Opens Violat settings"/>
         </group>
     </actions>
 
