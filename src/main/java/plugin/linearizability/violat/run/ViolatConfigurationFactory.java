@@ -6,12 +6,9 @@ import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.impl.RunManagerImpl;
 import com.intellij.openapi.project.Project;
-
-import plugin.linearizability.violat.config.GlobalSettings;
-
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import plugin.linearizability.violat.config.GlobalSettings;
 
 public class ViolatConfigurationFactory extends ConfigurationFactory {
     private static final String FACTORY_NAME = "Violat configuration factory";
@@ -33,10 +30,10 @@ public class ViolatConfigurationFactory extends ConfigurationFactory {
     }
 
     /**
-     * Creates a working Infer Run Configuration
+     * Creates a Violat Run Configuration
      * @param runManager The RunManager of the project where it should be generated
-     * @param name The name of the run configuration
-     * @return A valid Run Configuration, or null if it could not be created
+     * @param name The name of Violat Run Configuration
+     * @return A run configuration for violat or null
      */
     @Nullable
     public static RunnerAndConfigurationSettings createValidConfiguration(RunManagerImpl runManager, String name) {
@@ -44,9 +41,8 @@ public class ViolatConfigurationFactory extends ConfigurationFactory {
         final ConfigurationFactory inferFactory = runManager.getFactory("ViolatRunConfiguration", "Violat configuration factory");
         if(inferFactory != null) {
             RunnerAndConfigurationSettings rcs = runManager.createConfiguration(name, inferFactory);
-            ViolatRunConfiguration inferRC = (ViolatRunConfiguration) rcs.getConfiguration();
-//            inferRC.getLaunchOptions().setUsingBuildTool(BuildToolFactory.getPreferredBuildTool(runManager.getProject()));
-            inferRC.getLaunchOptions().setSelectedInstallation(GlobalSettings.getInstance().getAnyValidInstallation());
+            ViolatRunConfiguration violatRunConfig = (ViolatRunConfiguration) rcs.getConfiguration();
+            violatRunConfig.getLaunchOptions().setSelectedInstallation(GlobalSettings.getInstance().getAnyValidInstallation());
             return rcs;
         }
         return null;

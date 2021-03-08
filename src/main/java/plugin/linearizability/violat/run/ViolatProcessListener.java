@@ -11,12 +11,9 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.wm.ToolWindowManager;
-
+import org.jetbrains.annotations.NotNull;
 import plugin.linearizability.violat.config.GlobalSettings;
 import plugin.linearizability.violat.service.ResultParser;
-
-
-import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,18 +27,16 @@ public class ViolatProcessListener implements ProcessListener {
     ViolatProcessListener(Project project) { this.project = project; }
 
     /**
-     * Gets called when a Infer Process is terminated
-     * @param event Contains information about the terminated process
+     * Checks if Violat terminated correctly
+     * @param event Current run of violat
      */
     @Override
     public void processTerminated(@NotNull ProcessEvent event) {
         if(event.getExitCode() == 0) {
             log.info("Violat Process terminated successfully: Status Code 0");
 
-            //Open the Infer Tool Window, which needs to be done in an AWT Event Dispatcher Thread
-            if(!GlobalSettings.getInstance().isShowConsole()) { //if the user wants the console to stay in focus, we dont want to open the infer tool window
-
-
+            // Is checking if the user wants to see the run of violat
+            if(!GlobalSettings.getInstance().isShowConsole()) {
                 ApplicationManager.getApplication().invokeAndWait(() -> ToolWindowManager.getInstance(project).getToolWindow("Violat").activate(null, true));
             }
 
@@ -50,16 +45,9 @@ public class ViolatProcessListener implements ProcessListener {
             else log.error("result.txt does not exist after Violat terminated successfully: Check the Violat log");
 
         } else {
-            log.warn("Violat Process terminated unsuccessfully: Status Code " + event.getExitCode());
+            log.warn("Violat Process terminated with a failure status code of " + event.getExitCode());
             Notifications.Bus.notify(new Notification("Violat", "Failure", "Violat terminated unsuccessfully", NotificationType.ERROR));
         }
-
-        //remove the changedfiles.txt if it exists
-//        try {
-//            Files.deleteIfExists(Paths.get(project.getBasePath() + "/changedfiles.txt"));
-//        } catch (IOException e) {
-//            log.warn("Could not delete changedfiles.txt");
-//        }
     }
 
     @Override public void startNotified(@NotNull ProcessEvent event) { }
