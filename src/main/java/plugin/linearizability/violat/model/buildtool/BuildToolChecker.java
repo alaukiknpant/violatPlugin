@@ -1,6 +1,6 @@
 package plugin.linearizability.violat.model.buildtool;
 
-import java.util.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

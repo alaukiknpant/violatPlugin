@@ -2,9 +2,9 @@ package plugin.linearizability.violat.model;
 
 import com.github.cliftonlabs.json_simple.JsonObject;
 import com.intellij.openapi.diagnostic.Logger;
-import plugin.linearizability.violat.specgenerator.GetSpecs;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import plugin.linearizability.violat.specgenerator.GetSpecs;
 
 import java.io.File;
 import java.io.FileWriter;
